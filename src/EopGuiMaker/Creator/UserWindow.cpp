@@ -192,6 +192,8 @@ namespace EopGuiMaker
 			{
 				const auto new_component = CopiedComponent->Clone();
 				PushComponent(new_component);
+				new_component->SetPosition(new_component->Position, spacing_x, spacing_y);
+				new_component->SetSize(new_component->Size, spacing_x, spacing_y);
 			}
 		}
 		ImGui::End();
@@ -200,7 +202,11 @@ namespace EopGuiMaker
 	
 	void UserWindow::PushComponent(Component* component)
 	{
+		const float spacing_x = WindowSize.x / GridSize.Columns;
+		const float spacing_y = WindowSize.y / GridSize.Rows;
 		m_Components.emplace_back(component);
+		component->SetPosition(component->Position, spacing_x, spacing_y);
+		component->SetSize(component->Size, spacing_x, spacing_y);
 	}
 
 	void UserWindow::PopComponent(const Component* component)
