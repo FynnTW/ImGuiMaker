@@ -75,7 +75,31 @@ namespace EopGuiMaker
 			}
 
 		}
+		for (auto it = m_Components.end(); it != m_Components.begin(); )
+		{
+			const auto component = *--it;
+			component->Draw();
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+			{
+				SelectedComponent = component;
+				GUIMAKER_APP_INFO("Component Selected");
+			}
+		}
 		ImGui::End();
 	};
+
+	
+	void UserWindow::PushComponent(Component* component)
+	{
+		m_Components.emplace_back(component);
+	}
+
+	void UserWindow::PopComponent(const Component* component)
+	{
+		if (const auto it = std::find(m_Components.begin(), m_Components.end(), component); it != m_Components.end())
+		{
+			m_Components.erase(it);
+		}
+	}
 
 }

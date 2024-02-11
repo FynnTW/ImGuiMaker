@@ -104,8 +104,8 @@ project "GuiMaker"
         "src",
         "vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.GLAD}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}",
     }
 
     links 

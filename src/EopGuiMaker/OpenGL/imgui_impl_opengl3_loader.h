@@ -446,10 +446,6 @@ typedef void (APIENTRYP PFNGLGETINTEGERUI64I_VNVPROC) (GLenum value, GLuint inde
 #define GL3W_API
 #endif
 
-#ifndef __gl_h_
-#define __gl_h_
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif

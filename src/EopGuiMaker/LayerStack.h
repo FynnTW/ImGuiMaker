@@ -14,8 +14,8 @@ namespace EopGuiMaker {
 		~LayerStack();
 
 		void PushLayer(Layer* layer);
-		void PushOverlay(Layer* overlay);
 		void PopLayer(const Layer* layer);
+		void PushOverlay(Layer* overlay);
 		void PopOverlay(const Layer* overlay);
 
 		std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Components/Components.h"
 
 
 namespace EopGuiMaker
@@ -24,7 +25,16 @@ namespace EopGuiMaker
 		bool EnableGrid = true;
 		int GridSize[2] = { 10, 10 };
 		int GridAlpha = 120;
+		void PushComponent(Component* component);
+		void PopComponent(const Component* component);
+		Component* GetSelectedComponent(ImGuiContext* context);
+		Component* HoveredComponent;
+		Component* SelectedComponent;
+
+		std::vector<Component*>::iterator begin() { return m_Components.begin(); }
+		std::vector<Component*>::iterator end() { return m_Components.end(); }
 	private:
 		bool m_IsWindowOpen = false;
+		std::vector<Component*> m_Components;
 	};
 }

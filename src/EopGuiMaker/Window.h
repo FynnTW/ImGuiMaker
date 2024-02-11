@@ -5,6 +5,7 @@
 #include "Core.h"
 #include "Events/Event.h"
 #include "GLFW/glfw3.h"
+#include "glad/glad.h"
 
 namespace EopGuiMaker {
 
@@ -87,6 +88,12 @@ namespace EopGuiMaker {
 
 		[[nodiscard]] GLFWwindow* GetNativeWindow() const { return m_Window; }
 
+		bool hasBackground = false;
+
+		void SetBackgroundImage(const char* path);
+
+		GLuint ShaderProgram;
+
 		/**
 		 * \brief Create a window
 		 * \param props Window properties
@@ -98,6 +105,7 @@ namespace EopGuiMaker {
 			virtual void Init(const WindowProps& props);
 			virtual void Shutdown();
 			GLFWwindow* m_Window{};
+			unsigned int m_Quads;
 			struct WindowData
 			{
 				std::string Title;

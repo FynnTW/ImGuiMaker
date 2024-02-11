@@ -5,7 +5,6 @@
 #include "imgui.h"
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
-#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "OpenGL/imgui_impl_glfw.h"
 #include "OpenGL/imgui_impl_opengl3.h"
@@ -107,14 +106,19 @@ namespace EopGuiMaker
 
 		bool itemBox = ImGui::BeginListBox("Items", ImVec2(320, 1000));
 		if (itemBox) {
-			bool itemOne = ImGui::Selectable("Item 1", false);
+			bool Button = ImGui::Selectable("Button", false);
 			bool itemTwo = ImGui::Selectable("Item 2", false);
 			bool itemThree = ImGui::Selectable("Item 3", false);
+			if (Button) {
+				GUIMAKER_CORE_INFO("Added Button");
+				ThisWindow->PushComponent(new ButtonComponent("Click me", ImVec2(20,20), ImVec2(0,0) ));
+			}
 			ImGui::EndListBox();
 		}
 
 		if (ThisWindow->IsWindowOpen()) {
 			ThisWindow->DrawWindow();
+			SetSelectedComponent(ThisWindow->SelectedComponent);
 		}
 
 		ImGui::Render();
@@ -122,15 +126,18 @@ namespace EopGuiMaker
 	}
 
 	void EopGuiMaker::ImGuiLayer::OnAttach() {
-		ImGui::CreateContext();
+		Context = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 
+		const Application& app = Application::Get();
+		app.GetWindow().SetBackgroundImage("D:/data/Projects/EopGuiMaker/Resources/gameBackgroundStrat.png");
+
 		ImGui_ImplOpenGL3_Init("#version 410");
-		ImGui_ImplGlfw_InitForOpenGL(Application::Get().GetWindow().GetNativeWindow(), true);
+		ImGui_ImplGlfw_InitForOpenGL(app.GetWindow().GetNativeWindow(), true);
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -140,7 +147,13 @@ namespace EopGuiMaker
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
+		EventDispatcher eventDispatcher(event);
+		eventDispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonPressed));
+	}
 
+	bool ImGuiLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		return false;
 	}
 
 }

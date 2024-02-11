@@ -3,6 +3,9 @@
 
 #include "ImGui/ImGuiLayer.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <OpenGL/stb_image.h>
+
 namespace EopGuiMaker
 {
 
@@ -22,6 +25,33 @@ namespace EopGuiMaker
 
 	Application::~Application()
 	= default;
+
+	
+	GLuint* Application::LoadImage(const char* path, int width, int height, int channels, unsigned char* data)
+	{
+		unsigned char* bgData = stbi_load(path, &width, &height, &channels, 0);
+		GLuint bgTexture;
+		glGenTextures(1, &bgTexture);
+		glBindTexture(GL_TEXTURE_2D, bgTexture);
+
+		// Set texture parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Upload the image to the texture
+		glTexImage2D(GL_TEXTURE_2D, 0, channels == 4 ? GL_RGBA : GL_RGB, width, height, 0, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, bgData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		// Free the image memory
+		stbi_image_free(bgData);
+
+		// Unbind the texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return &bgTexture;
+	}
 
 	void Application::OnEvent(Event& e)
 	{

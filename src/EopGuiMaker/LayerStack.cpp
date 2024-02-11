@@ -19,11 +19,6 @@ namespace EopGuiMaker {
 		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
 	}
 
-	void LayerStack::PushOverlay(Layer* overlay)
-	{
-		m_Layers.emplace_back(overlay);
-	}
-
 	void LayerStack::PopLayer(const Layer* layer)
 	{
 		if (const auto it = std::find(m_Layers.begin(), m_Layers.end(), layer); it != m_Layers.end())
@@ -31,6 +26,11 @@ namespace EopGuiMaker {
 			m_Layers.erase(it);
 			--m_LayerInsert;
 		}
+	}
+
+	void LayerStack::PushOverlay(Layer* overlay)
+	{
+		m_Layers.emplace_back(overlay);
 	}
 
 	void LayerStack::PopOverlay(const Layer* overlay)

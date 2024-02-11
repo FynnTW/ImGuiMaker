@@ -5,6 +5,7 @@
 #include "Events/ApplicationEvent.h"
 #include "LayerStack.h"
 #include "Events/Event.h"
+#include "glad/glad.h"
 
 namespace EopGuiMaker
 {
@@ -22,6 +23,10 @@ namespace EopGuiMaker
 			void PushOverlay(Layer* layer);
 
 			static Application& Get() { return *m_Instance; }
+
+			static GLuint* LoadImage(const char* path, int width, int height, int channels = 4, unsigned char* data = nullptr);
+
+			GLuint texture;
 
 			[[nodiscard]] Window& GetWindow() const { return *m_Window; }
 	private:
