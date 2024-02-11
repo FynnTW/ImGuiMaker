@@ -77,6 +77,8 @@
       <Filter>EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\gmpch.h" />
+    <ClInclude Include="src\EopGuiMaker\ImGui\themeManager.h" />
+    <ClInclude Include="src\EopGuiMaker\ImGui\toml.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp">
@@ -107,6 +109,7 @@
       <Filter>EopGuiMaker</Filter>
     </ClCompile>
     <ClCompile Include="src\gmpch.cpp" />
+    <ClCompile Include="src\EopGuiMaker\ImGui\themeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\EopGuiMaker\OpenGL\vertex_shader.glsl" />

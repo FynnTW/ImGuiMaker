@@ -75,7 +75,12 @@ namespace EopGuiMaker
 		    	windowSettingsPopup = true;
 				ImGui::EndMenu();
 			}
-		    if (ImGui::BeginMenu("SetBackGround")) 
+		    if (ImGui::BeginMenu("Snap Components")) 
+			{
+		    	ThisWindow->SnapComponents();
+				ImGui::EndMenu();
+			}
+		    if (ImGui::BeginMenu("Set BackGround")) 
 			{
 		        if (ImGui::MenuItem("Strat")) {
 		            // Trigger the application to close

@@ -22,6 +22,7 @@ namespace EopGuiMaker
 		char WindowName[128] = "New Window";
 		ImVec2 WindowSize = { 1280.0f, 720.0f };
 		ImVec2 WindowPosition = { 0.0, 0.0};
+		void SnapComponents();
 		bool EnableGrid = true;
 		struct Grid
 		{

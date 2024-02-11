@@ -26,6 +26,7 @@ namespace EopGuiMaker
 	{
 		GridSize.Rows = rows;
 		GridSize.Columns = columns;
+		SnapComponents();
 	};
 	void UserWindow::DrawGrid(bool draw)
 	{
@@ -41,6 +42,21 @@ namespace EopGuiMaker
 		ImGui::SetNextWindowPos(ImVec2(WindowPosition[0], WindowPosition[1]));
 		ImGui::SetNextWindowSize(ImVec2(WindowSize[0], WindowSize[1]));
 	};
+
+	void UserWindow::SnapComponents()
+	{
+		const float spacing_x = WindowSize.x / GridSize.Columns;
+		const float spacing_y = WindowSize.y / GridSize.Rows;
+		for (auto it = m_Components.end(); it != m_Components.begin(); )
+		{
+			const auto component = *--it;
+			if (component->IsSnapped)
+			{
+				component->SetPosition(component->Position, spacing_x, spacing_y);
+				component->SetSize(component->Size, spacing_x, spacing_y);
+			}
+		}
+	}
 
 #define IMVEC2_ADD(a, b) ImVec2(a.x + b.x, a.y + b.y)
 	
@@ -88,6 +104,7 @@ namespace EopGuiMaker
 		for (auto it = m_Components.end(); it != m_Components.begin(); )
 		{
 			const auto component = *--it;
+
 			component->Draw();
 			//Select and drag components
 			if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
@@ -172,6 +189,7 @@ namespace EopGuiMaker
 	void UserWindow::PushComponent(Component* component)
 	{
 		m_Components.emplace_back(component);
+		SnapComponents();
 	}
 
 	void UserWindow::PopComponent(const Component* component)
@@ -180,6 +198,7 @@ namespace EopGuiMaker
 		{
 			m_Components.erase(it);
 		}
+		SnapComponents();
 	}
 
 }

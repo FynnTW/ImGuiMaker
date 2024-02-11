@@ -116,6 +116,8 @@
     <ClInclude Include="src\EopGuiMaker\Events\KeyEvent.h" />
     <ClInclude Include="src\EopGuiMaker\Events\MouseEvent.h" />
     <ClInclude Include="src\EopGuiMaker\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\EopGuiMaker\ImGui\themeManager.h" />
+    <ClInclude Include="src\EopGuiMaker\ImGui\toml.hpp" />
     <ClInclude Include="src\EopGuiMaker\Layer.h" />
     <ClInclude Include="src\EopGuiMaker\LayerStack.h" />
     <ClInclude Include="src\EopGuiMaker\Log.h" />
@@ -130,6 +132,7 @@
     <ClCompile Include="src\EopGuiMaker\Application.cpp" />
     <ClCompile Include="src\EopGuiMaker\Creator\UserWindow.cpp" />
     <ClCompile Include="src\EopGuiMaker\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\EopGuiMaker\ImGui\themeManager.cpp" />
     <ClCompile Include="src\EopGuiMaker\Layer.cpp" />
     <ClCompile Include="src\EopGuiMaker\LayerStack.cpp" />
     <ClCompile Include="src\EopGuiMaker\Log.cpp" />
