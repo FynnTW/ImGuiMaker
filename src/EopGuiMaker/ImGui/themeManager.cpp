@@ -1,7 +1,7 @@
 #include "gmpch.h"
 #include "imgui.h"
 #include "toml.hpp"
-
+/**
 ImGuiStyle* tomlToStyle(const char* filePath)
 {
 	// Light style from ImThemes
@@ -120,3 +120,4 @@ ImGuiStyle* tomlToStyle(const char* filePath)
 
 	return &style;
 }
+*/

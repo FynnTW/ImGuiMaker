@@ -36,6 +36,7 @@ namespace EopGuiMaker
 		Component* GetSelectedComponent(ImGuiContext* context);
 		Component* HoveredComponent;
 		Component* SelectedComponent;
+		Component* CopiedComponent;
 
 		std::vector<Component*>::iterator begin() { return m_Components.begin(); }
 		std::vector<Component*>::iterator end() { return m_Components.end(); }

@@ -182,6 +182,18 @@ namespace EopGuiMaker
 	        	IS_RESIZING = false; //
 	        }
 		}
+		if(ImGui::IsKeyPressed(ImGuiKey_C) && ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
+		{
+			CopiedComponent = SelectedComponent;
+		}
+		if(ImGui::IsKeyPressed(ImGuiKey_V) && ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
+		{
+			if (CopiedComponent)
+			{
+				const auto new_component = CopiedComponent->Clone();
+				PushComponent(new_component);
+			}
+		}
 		ImGui::End();
 	};
 
@@ -189,7 +201,6 @@ namespace EopGuiMaker
 	void UserWindow::PushComponent(Component* component)
 	{
 		m_Components.emplace_back(component);
-		SnapComponents();
 	}
 
 	void UserWindow::PopComponent(const Component* component)
@@ -198,7 +209,6 @@ namespace EopGuiMaker
 		{
 			m_Components.erase(it);
 		}
-		SnapComponents();
 	}
 
 }

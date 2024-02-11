@@ -1,9 +1,11 @@
 #pragma once
 
 #include "imgui.h"
+#include "EopGuiMaker/Creator/UserWindow.h"
 
 namespace EopGuiMaker
 {
+
 	class GUIMAKER_API Component
 	{
 	public:
@@ -29,11 +31,13 @@ namespace EopGuiMaker
 		}
 		ImVec2 Position;
 		ImVec2 Size;
-		void TextSettings(){
-			ImGui::BeginPopup("Text Settings");
+		virtual Component* Clone(){ return this;};
+		void TextSettings()
+		{
+			ImGui::NewLine();
 			ImGui::ColorEdit4("Text Color", &TextColor.x);
-
-
+			ImGui::ShowFontSelector("Fonts");
+			ImGui::NewLine();
 		};
 		bool IsSnapped = true;
 		ImVec4 TextColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
@@ -55,12 +59,29 @@ namespace EopGuiMaker
 			Size = size;
 			Position = position;
 		}
+		ButtonComponent* Clone() override
+		{
+			ButtonComponent* clone = new ButtonComponent(Label.c_str(), Size, Position);
+			clone->IsSnapped = IsSnapped;
+			clone->TextColor = TextColor;
+			clone->TextAlignment = TextAlignment;
+			clone->FramePadding = FramePadding;
+			clone->FrameRounding = FrameRounding;
+			clone->Color = Color;
+			clone->HoveredColor = HoveredColor;
+			clone->ActiveColor = ActiveColor;
+			clone->FrameBorderSize = FrameBorderSize;
+			clone->Size = Size;
+			clone->Position.x = Position.x + 10.0;
+			clone->Position.y = Position.y + 10.0;
+			return clone;
+		}
 		void PropertiesWindow() override
 		{
 			ImGui::Text("Button Properties");
+			TextSettings();
 			char* text = new char[100];
 			text = const_cast<char*>(Label.c_str());
-			ImGui::ShowStyleEditor();
 			ImGui::InputText("Text", text, 100);
 			if (!std::string(text).empty())
 				Label = text;
