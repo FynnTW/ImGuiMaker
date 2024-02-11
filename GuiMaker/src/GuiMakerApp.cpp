@@ -28,7 +28,6 @@ class GuiMakerApp : public EopGuiMaker::Application
 public:
 	GuiMakerApp()
 	{
-		PushLayer(new ExampleLayer());
 		PushOverlay(new EopGuiMaker::ImGuiLayer());
 	}
 

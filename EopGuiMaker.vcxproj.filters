@@ -62,6 +62,8 @@
       <Filter>EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\gmpch.h" />
+    <ClInclude Include="src\EopGuiMaker\Creator\UserWindow.h" />
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\Components.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp">
@@ -89,5 +91,6 @@
       <Filter>EopGuiMaker</Filter>
     </ClCompile>
     <ClCompile Include="src\gmpch.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\UserWindow.cpp" />
   </ItemGroup>
 </Project>
