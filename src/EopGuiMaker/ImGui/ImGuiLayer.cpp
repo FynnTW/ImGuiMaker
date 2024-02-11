@@ -51,7 +51,6 @@ namespace EopGuiMaker
 			}
 		}
 
-
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -66,9 +65,9 @@ namespace EopGuiMaker
 		        }
 		        ImGui::EndMenu();
 		    }
-		    if (ImGui::BeginMenu("Create")) 
+		    if (ImGui::BeginMenu("Window Parameters")) 
 			{
-		        if (ImGui::MenuItem("New Window")) {
+		        if (ImGui::MenuItem("Parameters")) {
 		    		openNewWindowPopup = true;
 		        }
 		    	ImGui::EndMenu();
@@ -137,7 +136,7 @@ namespace EopGuiMaker
 		if (openNewWindowPopup) {
 			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 			ImGui::SetNextWindowPos(center);
-			ImGui::OpenPopup("Create New Window");
+			ImGui::OpenPopup("Set Window Parameters");
 			// Always center this window when appearing
 			openNewWindowPopup = false; // Reset the flag
 		}
@@ -161,13 +160,13 @@ namespace EopGuiMaker
 		}
 
 
-		if (ImGui::BeginPopupModal("Create New Window", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal("Set Window Parameters", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 		    ImGui::InputText("Window Name", ThisWindow->WindowName, IM_ARRAYSIZE(ThisWindow->WindowName));
 		    ImGui::InputFloat2("Window Size", &ThisWindow->WindowSize.x);
 		    
-		    if (ImGui::Button("Create")) {
+		    if (ImGui::Button("Set")) {
 		        ImGui::CloseCurrentPopup(); // Close the popup when done
-				ThisWindow->OpenWindow(); // Set the flag to show the new window
+				ThisWindow->SetWindowSize(ThisWindow->WindowSize); // Set the flag to show the new window
 		    }
 		    ImGui::SameLine();
 		    if (ImGui::Button("Cancel")) {

@@ -86,8 +86,8 @@ namespace EopGuiMaker
 			clone->ActiveColor = ActiveColor;
 			clone->FrameBorderSize = FrameBorderSize;
 			clone->Size = Size;
-			clone->Position.x = Position.x + Size.x + 1.0f;
-			clone->Position.y = Position.y;
+			clone->Position.x = Position.x;
+			clone->Position.y = Position.y + Size.y + 1.0f;
 			return clone;
 		}
 		void PropertiesWindow() override

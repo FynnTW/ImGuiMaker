@@ -11,7 +11,7 @@ namespace EopGuiMaker
 		~UserWindow() = default;
 
 		void SetWindowName(const char* window_name);
-		void SetWindowSize(float width, float height);
+		void SetWindowSize(ImVec2 size);
 		bool IsWindowOpen() const;
 		bool IsGridEnabled() const;
 		void SetGridSize(int rows, int columns);

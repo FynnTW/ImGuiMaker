@@ -10,10 +10,10 @@ namespace EopGuiMaker
 	{
 		WindowName[0] = *window_name;
 	};
-	void UserWindow::SetWindowSize(float width, float height)
+	void UserWindow::SetWindowSize(ImVec2 size)
 	{
-		WindowSize.x = width;
-		WindowSize.y = height;
+		WindowSize = size;
+		ImGui::SetWindowSize(WindowName, size);
 	};
 	bool UserWindow::IsWindowOpen() const
 	{
@@ -71,14 +71,11 @@ namespace EopGuiMaker
 	void UserWindow::DrawWindow()
 	{
 		ImGui::Begin(WindowName, &m_IsWindowOpen, ImGuiWindowFlags_NoTitleBar);
-		const auto window_size = ImGui::GetWindowSize();
-		WindowSize.x = window_size.x;
-		WindowSize.y = window_size.y;
-		ImGui::SetWindowSize(ImVec2(WindowSize[0], WindowSize[1]));
-		const auto window_pos = ImGui::GetWindowPos();
-		WindowPosition.x = window_pos.x;
-		WindowPosition.y = window_pos.y;
-		ImGui::SetWindowPos(ImVec2(WindowPosition[0], WindowPosition[1]));
+		if (ImGui::IsWindowFocused())
+		{
+			WindowSize = ImGui::GetWindowSize();
+			WindowPosition = ImGui::GetWindowPos();
+		}
 		const float spacing_x = WindowSize.x / GridSize.Columns;
 		const float spacing_y = WindowSize.y / GridSize.Rows;
 		if (EnableGrid)
