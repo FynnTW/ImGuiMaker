@@ -16,7 +16,6 @@ namespace EopGuiMaker
 		: Layer("ImGuiLayer")
 	{
 		ThisWindow = new UserWindow();
-		ThisWindow->CloseWindow();
 	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -181,15 +180,25 @@ namespace EopGuiMaker
 			SetSelectedComponent(ThisWindow->SelectedComponent);
 		}
 
+		if (ThisWindow->SelectedComponent != nullptr) {
+			ImGui::Begin("Properties");
+			ThisWindow->SelectedComponent->PropertiesWindow();
+			if (ImGui::Button("Delete")) {
+				ThisWindow->PopComponent(ThisWindow->SelectedComponent);
+				ThisWindow->SelectedComponent = nullptr;
+			}
+			ImGui::End();
+		}
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+		/**
 		glUseProgram(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 		glDisable(GL_DEPTH_TEST); // ImGui doesn't use depth testing
 		glDisable(GL_CULL_FACE); // Ensure face culling is disabled
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Default blend function for ImGui
+		*/
 	}
 
 	void EopGuiMaker::ImGuiLayer::OnAttach() {
@@ -204,6 +213,7 @@ namespace EopGuiMaker
 
 		ImGui_ImplOpenGL3_Init("#version 410");
 		ImGui_ImplGlfw_InitForOpenGL(app.GetWindow().GetNativeWindow(), true);
+		ThisWindow->OpenWindow();
 	}
 
 	void ImGuiLayer::OnDetach()

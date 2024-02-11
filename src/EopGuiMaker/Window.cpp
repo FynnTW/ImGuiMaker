@@ -24,12 +24,12 @@ namespace EopGuiMaker
 
 	Window::~Window()
 	{
-		Window::Shutdown();
+		//Window::Shutdown();
 	}
 
 	void Window::Shutdown()
 	{
-		//glfwDestroyWindow(m_Window);
+		glfwDestroyWindow(m_Window);
 	}
 
 	// Function to compile a shader and check for errors
