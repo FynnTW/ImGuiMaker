@@ -137,9 +137,7 @@ namespace EopGuiMaker
 
 		if (ImGui::BeginPopupModal("Create New Window", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 		    ImGui::InputText("Window Name", ThisWindow->WindowName, IM_ARRAYSIZE(ThisWindow->WindowName));
-			float sizes[2] = {ThisWindow->WindowSize.x, ThisWindow->WindowSize.y};
-		    ImGui::InputFloat2("Window Size", sizes);
-			ThisWindow->SetWindowSize(sizes[0], sizes[1]);
+		    ImGui::InputFloat2("Window Size", &ThisWindow->WindowSize.x);
 		    
 		    if (ImGui::Button("Create")) {
 		        ImGui::CloseCurrentPopup(); // Close the popup when done
@@ -156,9 +154,7 @@ namespace EopGuiMaker
 		if (ImGui::BeginPopupModal("Window Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 
 		    ImGui::Checkbox("Enable Grid", &ThisWindow->EnableGrid);
-			int grid_size[2] = {ThisWindow->GridSize.Columns, ThisWindow->GridSize.Rows};
-		    ImGui::InputInt2("Grid Size", grid_size);
-			ThisWindow->SetGridSize(grid_size[0], grid_size[1]);
+		    ImGui::InputInt2("Grid Size", &ThisWindow->GridSize.Columns);
 			ImGui::InputInt("Grid Alpha", &ThisWindow->GridAlpha);
 		    
 		    if (ImGui::Button("Close")) {

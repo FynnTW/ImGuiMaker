@@ -50,11 +50,10 @@ namespace EopGuiMaker
 		for (auto it = m_Components.end(); it != m_Components.begin(); )
 		{
 			const auto component = *--it;
-			if (component->IsSnapped)
-			{
+			if (component->IsSnappedPos)
 				component->SetPosition(component->Position, spacing_x, spacing_y);
+			if (component->IsSnappedSize)
 				component->SetSize(component->Size, spacing_x, spacing_y);
-			}
 		}
 	}
 
@@ -144,7 +143,7 @@ namespace EopGuiMaker
 					if (IS_RESIZING)
 					{
 						const auto new_size = ImVec2(TEMP_SIZE.x + diff_x, TEMP_SIZE.y + diff_y);
-						if(!SelectedComponent->IsSnapped)
+						if(!SelectedComponent->IsSnappedSize)
 							SelectedComponent->SetSize(new_size, spacing_x, spacing_y);
 						else if (abs(TEMP_SIZE.x - ORIGINAL_SIZE.x) > spacing_x || abs(TEMP_SIZE.y - ORIGINAL_SIZE.y) > spacing_y)
 						{
@@ -156,7 +155,7 @@ namespace EopGuiMaker
 					else 
 					{
 						const auto new_pos = ImVec2(TEMP_POS.x + diff_x, TEMP_POS.y + diff_y);
-						if(!SelectedComponent->IsSnapped)
+						if(!SelectedComponent->IsSnappedPos)
 							SelectedComponent->SetPosition(new_pos, spacing_x, spacing_y);
 						else if (abs(TEMP_POS.x - ORIGINAL_POS.x) > spacing_x || abs(TEMP_POS.y - ORIGINAL_POS.y) > spacing_y)
 						{

@@ -14,19 +14,31 @@ namespace EopGuiMaker
 		void SetPosition(const ImVec2 position, const float grid_spacing_x, const float grid_spacing_y)
 		{
 			Position = position;
-			if (IsSnapped)
+			if (IsSnappedPos)
 			{
-				Position.x -= fmod(Position.x, grid_spacing_x);
-				Position.y -= fmod(Position.y, grid_spacing_y);
+				if (const float mod_x = fmod(Position.x, grid_spacing_x); mod_x > 0.5f)
+					Position.x += grid_spacing_x - mod_x;
+				else
+					Size.x -= mod_x;
+				if (const float mod_y = fmod(Position.y, grid_spacing_y); mod_y > 0.5f)
+					Position.y += grid_spacing_y - mod_y;
+				else
+					Position.y -= mod_y;
 			}
 		}
 		void SetSize(const ImVec2 size, const float grid_spacing_x, const float grid_spacing_y)
 		{
 			Size = size;
-			if (IsSnapped)
+			if (IsSnappedSize)
 			{
-				Size.x -= fmod(Size.x, grid_spacing_x);
-				Size.y -= fmod(Size.y, grid_spacing_y);
+				if (const float mod_x = fmod(Size.x, grid_spacing_x); mod_x > 0.5f)
+					Size.x += grid_spacing_x - mod_x;
+				else
+					Size.x -= mod_x;
+				if (const float mod_y = fmod(Size.y, grid_spacing_y); mod_y > 0.5f)
+					Size.y += grid_spacing_y - mod_y;
+				else
+					Size.y -= mod_y;
 			}
 		}
 		ImVec2 Position;
@@ -39,7 +51,8 @@ namespace EopGuiMaker
 			ImGui::ShowFontSelector("Fonts");
 			ImGui::NewLine();
 		};
-		bool IsSnapped = true;
+		bool IsSnappedSize = true;
+		bool IsSnappedPos = true;
 		ImVec4 TextColor = ImGui::GetStyle().Colors[ImGuiCol_Text];
 		virtual void Draw(){}
 		virtual void PropertiesWindow(){}
@@ -62,7 +75,8 @@ namespace EopGuiMaker
 		ButtonComponent* Clone() override
 		{
 			ButtonComponent* clone = new ButtonComponent(Label.c_str(), Size, Position);
-			clone->IsSnapped = IsSnapped;
+			clone->IsSnappedPos = IsSnappedPos;
+			clone->IsSnappedSize = IsSnappedSize;
 			clone->TextColor = TextColor;
 			clone->TextAlignment = TextAlignment;
 			clone->FramePadding = FramePadding;
@@ -72,8 +86,8 @@ namespace EopGuiMaker
 			clone->ActiveColor = ActiveColor;
 			clone->FrameBorderSize = FrameBorderSize;
 			clone->Size = Size;
-			clone->Position.x = Position.x + 10.0;
-			clone->Position.y = Position.y + 10.0;
+			clone->Position.x = Position.x + Size.x + 1.0f;
+			clone->Position.y = Position.y;
 			return clone;
 		}
 		void PropertiesWindow() override
@@ -85,7 +99,8 @@ namespace EopGuiMaker
 			ImGui::InputText("Text", text, 100);
 			if (!std::string(text).empty())
 				Label = text;
-			ImGui::Checkbox("Is Snapped", &IsSnapped);
+			ImGui::Checkbox("Is Size Snapped", &IsSnappedSize);
+			ImGui::Checkbox("Is Position Snapped", &IsSnappedPos);
 			
 			ImGui::InputFloat2("Text Alignment", &TextAlignment.x);
 			ImGui::InputFloat2("Frame Padding", &FramePadding.x);
