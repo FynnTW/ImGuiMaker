@@ -1,0 +1,12 @@
+#directories
+.vs/
+bin/
+bin-int/
+x64/
+*.vsidx
+*.lock
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.sqlite

@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FEDCA243-6A92-1B39-F386-15105F3B123D}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>EopGuiMaker</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>bin\Debug-windows-x86_64\EopGuiMaker\</OutDir>
+    <IntDir>bin-int\Debug-windows-x86_64\EopGuiMaker\</IntDir>
+    <TargetName>EopGuiMaker</TargetName>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>bin\Release-windows-x86_64\EopGuiMaker\</OutDir>
+    <IntDir>bin-int\Release-windows-x86_64\EopGuiMaker\</IntDir>
+    <TargetName>EopGuiMaker</TargetName>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>gmpch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>GUIMAKER_PLATFORM_WINDOWS;GUIMAKER_BUILD_DLL;GLFW_INCLUDE_NONE;GUIMAKER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\EopGuiMaker;src;vendor\spdlog\include;vendor\GLFW\include;vendor\GLAD\include;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>bin\Debug-windows-x86_64\EopGuiMaker\EopGuiMaker.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST bin\Debug-windows-x86_64\$(ProjectName)\EopGuiMaker.dll\ (xcopy /Q /E /Y /I bin\Debug-windows-x86_64\$(ProjectName)\EopGuiMaker.dll bin\Debug-windows-x86_64\GuiMaker &gt; nul) ELSE (xcopy /Q /Y /I bin\Debug-windows-x86_64\$(ProjectName)\EopGuiMaker.dll bin\Debug-windows-x86_64\GuiMaker &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>gmpch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>GUIMAKER_PLATFORM_WINDOWS;GUIMAKER_BUILD_DLL;GLFW_INCLUDE_NONE;GUIMAKER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\EopGuiMaker;src;vendor\spdlog\include;vendor\GLFW\include;vendor\GLAD\include;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;dwmapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>bin\Release-windows-x86_64\EopGuiMaker\EopGuiMaker.lib</ImportLibrary>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST bin\Release-windows-x86_64\$(ProjectName)\EopGuiMaker.dll\ (xcopy /Q /E /Y /I bin\Release-windows-x86_64\$(ProjectName)\EopGuiMaker.dll bin\Release-windows-x86_64\GuiMaker &gt; nul) ELSE (xcopy /Q /Y /I bin\Release-windows-x86_64\$(ProjectName)\EopGuiMaker.dll bin\Release-windows-x86_64\GuiMaker &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\EopGuiMaker.h" />
+    <ClInclude Include="src\EopGuiMaker\Application.h" />
+    <ClInclude Include="src\EopGuiMaker\Core.h" />
+    <ClInclude Include="src\EopGuiMaker\EntryPoint.h" />
+    <ClInclude Include="src\EopGuiMaker\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\EopGuiMaker\Events\Event.h" />
+    <ClInclude Include="src\EopGuiMaker\Events\KeyEvent.h" />
+    <ClInclude Include="src\EopGuiMaker\Events\MouseEvent.h" />
+    <ClInclude Include="src\EopGuiMaker\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\EopGuiMaker\Layer.h" />
+    <ClInclude Include="src\EopGuiMaker\LayerStack.h" />
+    <ClInclude Include="src\EopGuiMaker\Log.h" />
+    <ClInclude Include="src\EopGuiMaker\OpenGL\imgui_impl_glfw.h" />
+    <ClInclude Include="src\EopGuiMaker\OpenGL\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\EopGuiMaker\OpenGL\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="src\EopGuiMaker\Window.h" />
+    <ClInclude Include="src\gmpch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\EopGuiMaker\Application.cpp" />
+    <ClCompile Include="src\EopGuiMaker\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Layer.cpp" />
+    <ClCompile Include="src\EopGuiMaker\LayerStack.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Log.cpp" />
+    <ClCompile Include="src\EopGuiMaker\OpenGL\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\EopGuiMaker\OpenGL\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Window.cpp" />
+    <ClCompile Include="src\gmpch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
+      <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\Glad\GLAD.vcxproj">
+      <Project>{5D4A857C-4981-860D-F26D-6C10DE83020F}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
