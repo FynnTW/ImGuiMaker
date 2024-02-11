@@ -37,6 +37,9 @@ namespace EopGuiMaker
 		Component* HoveredComponent;
 		Component* SelectedComponent;
 		Component* CopiedComponent;
+		std::string GetOutPutCode();
+		std::string GetOutPutCodeLua();
+
 
 		std::vector<Component*>::iterator begin() { return m_Components.begin(); }
 		std::vector<Component*>::iterator end() { return m_Components.end(); }

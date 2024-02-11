@@ -2,6 +2,7 @@
 #include "UserWindow.h"
 
 #include "imgui.h"
+#include <format>
 
 namespace EopGuiMaker
 {
@@ -39,8 +40,8 @@ namespace EopGuiMaker
 	void UserWindow::OpenWindow()
 	{
 		m_IsWindowOpen = true;
-		ImGui::SetNextWindowPos(ImVec2(WindowPosition[0], WindowPosition[1]));
-		ImGui::SetNextWindowSize(ImVec2(WindowSize[0], WindowSize[1]));
+		ImGui::SetNextWindowPos(WindowPosition);
+		ImGui::SetNextWindowSize(WindowSize);
 	};
 
 	void UserWindow::SnapComponents()
@@ -196,6 +197,36 @@ namespace EopGuiMaker
 			}
 		}
 		ImGui::End();
+	};
+
+	std::string UserWindow::GetOutPutCode()
+	{
+		
+		std::string code = "";
+		code += "bool IsWindowOpen = true;\n";
+		code += fmt::format("ImGui::SetNextWindowPos(ImVec2({}, {}));\n", WindowPosition.x, WindowPosition.y);
+		code += fmt::format("ImGui::SetNextWindowSize(ImVec2({}, {}));\n", WindowSize.x, WindowSize.y);
+		code += fmt::format("ImGui::Begin(\"{}\", &IsWindowOpen, ImGuiWindowFlags_NoTitleBar);\n", WindowName);
+		for (auto it = m_Components.begin(); it != m_Components.end(); it++)
+		{
+			//code += (*it)->GetOutPutCode();
+		}
+		code += fmt::format("ImGui::End();\n", WindowName);
+		return code;
+	};
+	std::string UserWindow::GetOutPutCodeLua()
+	{
+		std::string code = "";
+		code += "local IsWindowOpen = true\n";
+		code += fmt::format("ImGui.SetNextWindowPos({}, {})\n", WindowPosition.x, WindowPosition.y);
+		code += fmt::format("ImGui.SetNextWindowSize({}, {})\n", WindowSize.x, WindowSize.y);
+		code += fmt::format("ImGui.Begin(\"{}\", IsWindowOpen, ImGuiWindowFlags.NoTitleBar)\n", WindowName);
+		for (auto it = m_Components.begin(); it != m_Components.end(); it++)
+		{
+			//code += (*it)->GetOutPutCodeLua();
+		}
+		code += fmt::format("ImGui.End()\n", WindowName);
+		return code;
 	};
 
 	

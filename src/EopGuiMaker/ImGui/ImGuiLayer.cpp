@@ -23,6 +23,8 @@ namespace EopGuiMaker
 	
 	static bool openNewWindowPopup = false;
 	static bool windowSettingsPopup = false;
+	static bool openCodeWindow = false;
+	std::string code = "";
 
 	void ImGuiLayer::OnUpdate()
 	{
@@ -66,19 +68,20 @@ namespace EopGuiMaker
 		    }
 		    if (ImGui::BeginMenu("Create")) 
 			{
-				ThisWindow->CloseWindow();
-		    	openNewWindowPopup = true;
-				ImGui::EndMenu();
+		        if (ImGui::MenuItem("New Window")) {
+		    		openNewWindowPopup = true;
+		        }
+		    	ImGui::EndMenu();
 			}
 		    if (ImGui::BeginMenu("Options")) 
 			{
-		    	windowSettingsPopup = true;
-				ImGui::EndMenu();
-			}
-		    if (ImGui::BeginMenu("Snap Components")) 
-			{
-		    	ThisWindow->SnapComponents();
-				ImGui::EndMenu();
+		        if (ImGui::MenuItem("Snap Components")) {
+		    		ThisWindow->SnapComponents();
+		        }
+		        if (ImGui::MenuItem("Grid settings")) {
+		    		windowSettingsPopup = true;
+		        }
+		    	ImGui::EndMenu();
 			}
 		    if (ImGui::BeginMenu("Set BackGround")) 
 			{
@@ -116,6 +119,18 @@ namespace EopGuiMaker
 		        }
 				ImGui::EndMenu();
 			}
+		    if (ImGui::BeginMenu("Generate Code")) 
+			{
+		        if (ImGui::MenuItem("C++")) {
+		            code = ThisWindow->GetOutPutCode();
+					openCodeWindow = true;
+		        }
+		        if (ImGui::MenuItem("Lua")) {
+		            code = ThisWindow->GetOutPutCodeLua();
+					openCodeWindow = true;
+		        }
+				ImGui::EndMenu();
+			}
 		}
 	    ImGui::EndMainMenuBar();
 
@@ -125,6 +140,17 @@ namespace EopGuiMaker
 			ImGui::OpenPopup("Create New Window");
 			// Always center this window when appearing
 			openNewWindowPopup = false; // Reset the flag
+		}
+
+		if (openCodeWindow) {
+			ImGui::Begin("Code", &openCodeWindow);
+			ImGui::TextWrapped(code.c_str());
+			if (ImGui::Button("Copy"))
+				ImGui::SetClipboardText(code.c_str());
+			ImGui::SameLine();
+			if (ImGui::Button("Close"))
+				openCodeWindow = false;
+			ImGui::End();
 		}
 
 		if (windowSettingsPopup) {
