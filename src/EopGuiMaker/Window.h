@@ -93,6 +93,7 @@ namespace EopGuiMaker {
 		void SetBackgroundImage(const char* path);
 
 		GLuint ShaderProgram;
+		unsigned int Quads;
 
 		/**
 		 * \brief Create a window
@@ -105,7 +106,6 @@ namespace EopGuiMaker {
 			virtual void Init(const WindowProps& props);
 			virtual void Shutdown();
 			GLFWwindow* m_Window{};
-			unsigned int m_Quads;
 			struct WindowData
 			{
 				std::string Title;

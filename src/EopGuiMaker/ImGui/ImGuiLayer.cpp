@@ -29,7 +29,27 @@ namespace EopGuiMaker
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		const auto window = Application::Get().GetWindow();
+		auto window = Application::Get().GetWindow();
+		if (window.hasBackground)
+		{
+			if (Application::Get().texture)
+			{
+				glBindTexture(GL_TEXTURE_2D, Application::Get().texture);
+
+				glUseProgram(window.ShaderProgram);
+        
+		        // Bind the vertex array
+		        glBindVertexArray(window.Quads);
+		        
+		        // Draw the quad
+		        glDrawArrays(GL_TRIANGLES, 0, 6);
+		        
+		        // Unbind the vertex array
+		        glBindVertexArray(0);
+
+			}
+		}
+
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -56,6 +76,42 @@ namespace EopGuiMaker
 		    	windowSettingsPopup = true;
 				ImGui::EndMenu();
 			}
+		    if (ImGui::BeginMenu("SetBackGround")) 
+			{
+		        if (ImGui::MenuItem("Strat")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundStrat.png");
+		        }
+		        if (ImGui::MenuItem("Character")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundCharacter.png");
+		        }
+		        if (ImGui::MenuItem("Settlement")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundSettlement.png");
+		        }
+		        if (ImGui::MenuItem("Recruitment")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundRecruitment.png");
+		        }
+		        if (ImGui::MenuItem("Fort")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundFort.png");
+		        }
+		        if (ImGui::MenuItem("Unit")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundUnit.png");
+		        }
+		        if (ImGui::MenuItem("Faction")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundFaction.png");
+		        }
+		        if (ImGui::MenuItem("Economy")) {
+		            // Trigger the application to close
+		            window.SetBackgroundImage("D:/data/Projects/eopGuiMaker/Resources/gameBackgroundEconomy.png");
+		        }
+				ImGui::EndMenu();
+			}
 		}
 	    ImGui::EndMainMenuBar();
 
@@ -77,7 +133,9 @@ namespace EopGuiMaker
 
 		if (ImGui::BeginPopupModal("Create New Window", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 		    ImGui::InputText("Window Name", ThisWindow->WindowName, IM_ARRAYSIZE(ThisWindow->WindowName));
-		    ImGui::InputFloat2("Window Size", ThisWindow->WindowSize);
+			float sizes[2] = {ThisWindow->WindowSize.x, ThisWindow->WindowSize.y};
+		    ImGui::InputFloat2("Window Size", sizes);
+			ThisWindow->SetWindowSize(sizes[0], sizes[1]);
 		    
 		    if (ImGui::Button("Create")) {
 		        ImGui::CloseCurrentPopup(); // Close the popup when done
@@ -94,7 +152,9 @@ namespace EopGuiMaker
 		if (ImGui::BeginPopupModal("Window Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 
 		    ImGui::Checkbox("Enable Grid", &ThisWindow->EnableGrid);
-		    ImGui::InputInt2("Grid Size", ThisWindow->GridSize);
+			int grid_size[2] = {ThisWindow->GridSize.Columns, ThisWindow->GridSize.Rows};
+		    ImGui::InputInt2("Grid Size", grid_size);
+			ThisWindow->SetGridSize(grid_size[0], grid_size[1]);
 			ImGui::InputInt("Grid Alpha", &ThisWindow->GridAlpha);
 		    
 		    if (ImGui::Button("Close")) {
@@ -111,7 +171,7 @@ namespace EopGuiMaker
 			bool itemThree = ImGui::Selectable("Item 3", false);
 			if (Button) {
 				GUIMAKER_CORE_INFO("Added Button");
-				ThisWindow->PushComponent(new ButtonComponent("Click me", ImVec2(20,20), ImVec2(0,0) ));
+				ThisWindow->PushComponent(new ButtonComponent("Button", ImVec2(100,50), ImVec2(0,0) ));
 			}
 			ImGui::EndListBox();
 		}
@@ -123,6 +183,13 @@ namespace EopGuiMaker
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+		glDisable(GL_DEPTH_TEST); // ImGui doesn't use depth testing
+		glDisable(GL_CULL_FACE); // Ensure face culling is disabled
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Default blend function for ImGui
 	}
 
 	void EopGuiMaker::ImGuiLayer::OnAttach() {
@@ -134,7 +201,6 @@ namespace EopGuiMaker
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 
 		const Application& app = Application::Get();
-		app.GetWindow().SetBackgroundImage("D:/data/Projects/EopGuiMaker/Resources/gameBackgroundStrat.png");
 
 		ImGui_ImplOpenGL3_Init("#version 410");
 		ImGui_ImplGlfw_InitForOpenGL(app.GetWindow().GetNativeWindow(), true);

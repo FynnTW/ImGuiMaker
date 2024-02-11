@@ -72,12 +72,12 @@ namespace EopGuiMaker
 	{
 		while (m_Running)
 		{
+			m_Window->OnUpdate();
+
 			for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 			{
 				(*--it)->OnUpdate();
 			}
-
-			m_Window->OnUpdate();
 		}
 	}
 

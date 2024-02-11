@@ -20,10 +20,15 @@ namespace EopGuiMaker
 		void OpenWindow();
 		void DrawWindow();
 		char WindowName[128] = "New Window";
-		float WindowSize[2] = { 1280.0f, 720.0f };
-		float WindowPosition[2] = { 0.0, 0.0};
+		ImVec2 WindowSize = { 1280.0f, 720.0f };
+		ImVec2 WindowPosition = { 0.0, 0.0};
 		bool EnableGrid = true;
-		int GridSize[2] = { 10, 10 };
+		struct Grid
+		{
+			int Columns;
+			int Rows;
+		};
+		Grid GridSize = { 50, 50 };
 		int GridAlpha = 120;
 		void PushComponent(Component* component);
 		void PopComponent(const Component* component);

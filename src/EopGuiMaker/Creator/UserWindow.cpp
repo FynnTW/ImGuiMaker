@@ -11,8 +11,8 @@ namespace EopGuiMaker
 	};
 	void UserWindow::SetWindowSize(float width, float height)
 	{
-		WindowSize[0] = width;
-		WindowSize[1] = height;
+		WindowSize.x = width;
+		WindowSize.y = height;
 	};
 	bool UserWindow::IsWindowOpen() const
 	{
@@ -24,8 +24,8 @@ namespace EopGuiMaker
 	};
 	void UserWindow::SetGridSize(int rows, int columns)
 	{
-		GridSize[0] = rows;
-		GridSize[1] = columns;
+		GridSize.Rows = rows;
+		GridSize.Columns = columns;
 	};
 	void UserWindow::DrawGrid(bool draw)
 	{
@@ -46,31 +46,31 @@ namespace EopGuiMaker
 	{
 		ImGui::Begin(WindowName, &m_IsWindowOpen, ImGuiWindowFlags_NoTitleBar);
 		auto windowSize = ImGui::GetWindowSize();
-		WindowSize[0] = windowSize.x;
-		WindowSize[1] = windowSize.y;
+		WindowSize.x = windowSize.x;
+		WindowSize.y = windowSize.y;
 		ImGui::SetWindowSize(ImVec2(WindowSize[0], WindowSize[1]));
 		auto windowPos = ImGui::GetWindowPos();
-		WindowPosition[0] = windowPos.x;
-		WindowPosition[1] = windowPos.y;
+		WindowPosition.x = windowPos.x;
+		WindowPosition.y = windowPos.y;
 		ImGui::SetWindowPos(ImVec2(WindowPosition[0], WindowPosition[1]));
 		if (EnableGrid)
 		{
-			float spacingX = WindowSize[0] / GridSize[1];
-			float spacingY = WindowSize[1] / GridSize[0];
+			float spacingX = WindowSize.x / GridSize.Columns;
+			float spacingY = WindowSize.y / GridSize.Rows;
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
 			ImVec2 winPos = ImGui::GetWindowPos(); // Top-left corner of the window
 
 			// Draw vertical lines
-			for (int col = 0; col <= GridSize[0]; col++) {
+			for (int col = 0; col <= GridSize.Columns; col++) {
 			    ImVec2 startPos = ImVec2(winPos.x + col * spacingX, winPos.y);
-			    ImVec2 endPos = ImVec2(winPos.x + col * spacingX, winPos.y + WindowSize[1]);
+			    ImVec2 endPos = ImVec2(winPos.x + col * spacingX, winPos.y + WindowSize.y);
 			    draw_list->AddLine(startPos, endPos, IM_COL32(255, 255, 255, GridAlpha)); // White lines
 			}
 
 			// Draw horizontal lines
-			for (int row = 0; row <= GridSize[1]; row++) {
+			for (int row = 0; row <= GridSize.Rows; row++) {
 			    ImVec2 startPos = ImVec2(winPos.x, winPos.y + row * spacingY);
-			    ImVec2 endPos = ImVec2(winPos.x + WindowSize[0], winPos.y + row * spacingY);
+			    ImVec2 endPos = ImVec2(winPos.x + WindowSize.x, winPos.y + row * spacingY);
 			    draw_list->AddLine(startPos, endPos, IM_COL32(255, 255, 255, GridAlpha)); // White lines
 			}
 

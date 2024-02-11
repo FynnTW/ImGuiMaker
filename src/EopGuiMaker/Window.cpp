@@ -134,25 +134,26 @@ namespace EopGuiMaker
 		ShaderProgram = createShaderProgram("D:/data/Projects/eopGuiMaker/src/EopGuiMaker/OpenGL/vertex_shader.glsl",
 			"D:/data/Projects/eopGuiMaker/src/EopGuiMaker/OpenGL/fragment_shader.glsl");
 		float quadVertices[] = {
-		    // positions   // texCoords
-		    -1.0f,  1.0f,  0.0f, 1.0f,
-		    -1.0f, -1.0f,  0.0f, 0.0f,
-		     1.0f, -1.0f,  1.0f, 0.0f,
+		    // positions   // flipped texCoords
+		    -1.0f,  1.0f,  0.0f, 0.0f,
+		    -1.0f, -1.0f,  0.0f, 1.0f,
+		     1.0f, -1.0f,  1.0f, 1.0f,
 
-		    -1.0f,  1.0f,  0.0f, 1.0f,
-		     1.0f, -1.0f,  1.0f, 0.0f,
-		     1.0f,  1.0f,  1.0f, 1.0f
+		    -1.0f,  1.0f,  0.0f, 0.0f,
+		     1.0f, -1.0f,  1.0f, 1.0f,
+		     1.0f,  1.0f,  1.0f, 0.0f
 		};
 		unsigned int quadVBO;
-		glGenVertexArrays(1, &m_Quads);
+		glGenVertexArrays(1, &Quads);
 		glGenBuffers(1, &quadVBO);
-		glBindVertexArray(m_Quads);
+		glBindVertexArray(Quads);
 		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), static_cast<void*>(nullptr));
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
+		SetBackgroundImage("D:/data/Projects/EopGuiMaker/Resources/gameBackgroundStrat.png");
 
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, const int width, const int height)
 		{
@@ -246,24 +247,6 @@ namespace EopGuiMaker
 
 	void Window::OnUpdate() const
 	{
-		if (hasBackground)
-		{
-			if (Application::Get().texture)
-			{
-				glBindTexture(GL_TEXTURE_2D, Application::Get().texture);
-
-				glUseProgram(ShaderProgram);
-        
-		        // Bind the vertex array
-		        glBindVertexArray(m_Quads);
-		        
-		        // Draw the quad
-		        glDrawArrays(GL_TRIANGLES, 0, 6);
-		        
-		        // Unbind the vertex array
-		        glBindVertexArray(0);
-			}
-		}
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
 	}
