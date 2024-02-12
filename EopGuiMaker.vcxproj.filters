@@ -81,6 +81,8 @@
     <ClInclude Include="src\EopGuiMaker\ImGui\toml.hpp" />
     <ClInclude Include="src\EopGuiMaker\Creator\Components\StyleSettings.h" />
     <ClInclude Include="src\EopGuiMaker\Creator\Components\ButtonComponent.h" />
+    <ClInclude Include="src\EopGuiMaker\ImGui\imgui_stdlib.h" />
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\ChildComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp">
@@ -115,6 +117,8 @@
     <ClCompile Include="src\EopGuiMaker\Creator\Components\StyleSettings.cpp" />
     <ClCompile Include="src\EopGuiMaker\Creator\Components\Components.cpp" />
     <ClCompile Include="src\EopGuiMaker\Creator\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\EopGuiMaker\ImGui\imgui_stdlib.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\ChildComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\EopGuiMaker\OpenGL\vertex_shader.glsl" />

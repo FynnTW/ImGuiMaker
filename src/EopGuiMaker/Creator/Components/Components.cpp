@@ -80,6 +80,7 @@ namespace EopGuiMaker
 		ImGui::SameLine();
 		if (ImGui::Button("Reset Colors"))
 			Styles.ResetColors();
+		ImGui::InputText("Label", &Label);
 	}
 	
 	void Component::DrawProperties()
@@ -95,6 +96,7 @@ namespace EopGuiMaker
 				Styles.GetColorEditor(i);
 		}
 	}
+	
 
 
 

@@ -24,6 +24,42 @@ enum FloatStyle
 	FloatStyle_Count,
 };
 
+inline std::unordered_map<int, const char*> WINDOW_FLAG_NAMES = {
+	{ImGuiWindowFlags_NoTitleBar,"No Title Bar"},
+	{ImGuiWindowFlags_NoResize,"No Resize"},
+	{ImGuiWindowFlags_NoMove,"No Move"},
+	{ImGuiWindowFlags_NoScrollbar,"No Scroll Bar"},
+	{ImGuiWindowFlags_NoScrollWithMouse,"No Scroll With Mouse"},
+	{ImGuiWindowFlags_NoCollapse,"No Collapse"},
+	{ImGuiWindowFlags_AlwaysAutoResize,"Always Auto Resize"},
+	{ImGuiWindowFlags_NoBackground,"No Background"},
+	{ImGuiWindowFlags_NoSavedSettings,"No Saved Settings"},
+	{ImGuiWindowFlags_NoMouseInputs,"No Mouse Inputs"},
+	{ImGuiWindowFlags_MenuBar,"Menu Bar"},
+	{ImGuiWindowFlags_HorizontalScrollbar,"Horizontal Scrollbar"},
+	{ImGuiWindowFlags_NoFocusOnAppearing,"No Focus On Appearing"},
+	{ImGuiWindowFlags_NoBringToFrontOnFocus,"No Bring To Front On Focus"},
+	{ImGuiWindowFlags_AlwaysVerticalScrollbar,"Always Vertical Scrollbar"},
+	{ImGuiWindowFlags_AlwaysHorizontalScrollbar,"Always Horizontal Scrollbar"},
+	{ImGuiWindowFlags_NoNavInputs,"No Nav Inputs"},
+	{ImGuiWindowFlags_NoNavFocus,"No Nav Focus"},
+	{ImGuiWindowFlags_UnsavedDocument,"Unsaved Document"},
+	{ImGuiWindowFlags_NoNav,"No Nav"},
+	{ImGuiWindowFlags_NoDecoration,"No Decoration"},
+	{ImGuiWindowFlags_NoInputs,"No Inputs"},
+};
+
+inline std::unordered_map<int, const char*> CHILD_FLAG_NAMES = {
+	{ImGuiChildFlags_Border,"Border"},
+	{ImGuiChildFlags_AlwaysUseWindowPadding,"Always Use Window Padding"},
+	{ImGuiChildFlags_ResizeX,"Resize X"},
+	{ImGuiChildFlags_ResizeY,"Resize Y"},
+	{ImGuiChildFlags_AutoResizeX,"Auto Resize X"},
+	{ImGuiChildFlags_AutoResizeY,"Auto Resize Y"},
+	{ImGuiChildFlags_AlwaysAutoResize,"Always Auto Resize"},
+	{ImGuiChildFlags_FrameStyle,"Frame Style"},
+};
+
 inline std::unordered_map<int, const char*> STYLE_NAMES = {
 	{ImGuiStyleVar_Alpha,"Alpha"},
 	{ImGuiStyleVar_DisabledAlpha,"Disabled Alpha"},
@@ -228,6 +264,8 @@ public:
 	ImVec4 Colors[ImGuiCol_COUNT];
 	int SetStylesCount = 0;
 	int SetColorsCount = 0;
+	UINT32 EditedStyles = 0;
+	UINT64 EditedColors = 0;
 
 	UINT32 IsFloatStyle = 
 		  1 << ImGuiStyleVar_Alpha
@@ -264,8 +302,11 @@ public:
 
 	StyleSettings()
 	{
-		ResetStyles();
-		ResetColors();
+		if (ImGui::GetCurrentContext())
+		{
+			ResetStyles();
+			ResetColors();
+		}
 	}
 
 	StyleSettings(const StyleSettings& other)
@@ -281,13 +322,14 @@ public:
 	{
 		if (const int float_style_index = GetFloatStyleIndex(style); float_style_index != -1)
 		{
-			if (FLOAT_NOT_EQUAL(FloatStyles[float_style_index], GetImGuiFloat(float_style_index)))
+			if (EditedStyles & 1 << style)
 			{
 				ImGui::PushStyleVar(style, FloatStyles[float_style_index]);
 				SetStylesCount++;
 			}
 		}
 	}
+
 
 	void PopStyles() const
 	{
@@ -300,7 +342,7 @@ public:
 		if (color >= ImGuiCol_COUNT)
 			return;
 
-		if (!COLOR_IS_EQUAL(Colors[color], ImGui::GetStyleColorVec4(color)))
+		if (EditedColors & 1ULL << color)
 		{
 			ImGui::PushStyleColor(color, Colors[color]);
 			SetColorsCount++;
@@ -317,7 +359,7 @@ public:
 			{
 				if (IsFloatStyle & (1 << i))
 				{
-					if (const int float_index = GetFloatStyleIndex(i); FLOAT_NOT_EQUAL(FloatStyles[float_index], GetImGuiFloat(float_index)))
+					if (const int float_index = GetFloatStyleIndex(i); EditedStyles & 1 << i)
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
@@ -327,7 +369,7 @@ public:
 				}
 				else if (IsImVec2Style & (1 << i))
 				{
-					if (const int im_vec2_index = GetImVec2StyleIndex(i); !IMVEC2_IS_EQUAL(ImVec2Styles[im_vec2_index], GetImGuiImVec2(im_vec2_index)))
+					if (const int im_vec2_index = GetImVec2StyleIndex(i); EditedStyles & 1 << i)
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
@@ -341,7 +383,7 @@ public:
 		{
 			for (int i = 0; i < ImGuiCol_COUNT; i++)
 			{
-				if (!COLOR_IS_EQUAL(Colors[i], ImGui::GetStyleColorVec4(i)))
+				if (EditedColors & 1ULL << i)
 				{
 					if (const auto color_id_index = COLOR_ID.find(i); color_id_index != COLOR_ID.end())
 					{
@@ -363,7 +405,7 @@ public:
 			{
 				if (IsFloatStyle & (1 << i))
 				{
-					if (const int float_index = GetFloatStyleIndex(i); FLOAT_NOT_EQUAL(FloatStyles[float_index], GetImGuiFloat(float_index)))
+					if (const int float_index = GetFloatStyleIndex(i); EditedStyles & 1 << i)
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
@@ -373,7 +415,7 @@ public:
 				}
 				else if (IsImVec2Style & (1 << i))
 				{
-					if (const int im_vec2_index = GetImVec2StyleIndex(i); !IMVEC2_IS_EQUAL(ImVec2Styles[im_vec2_index], GetImGuiImVec2(im_vec2_index)))
+					if (const int im_vec2_index = GetImVec2StyleIndex(i); EditedStyles & 1 << i)
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
@@ -387,7 +429,7 @@ public:
 		{
 			for (int i = 0; i < ImGuiCol_COUNT; i++)
 			{
-				if (!COLOR_IS_EQUAL(Colors[i], ImGui::GetStyleColorVec4(i)))
+				if (EditedColors & 1ULL << i)
 				{
 					if (const auto color_id_index = COLOR_ID.find(i); color_id_index != COLOR_ID.end())
 					{
@@ -401,6 +443,7 @@ public:
 
 	void ResetStyles()
 	{
+		EditedStyles = 0;
 		for (int i = 0; i < FloatStyle_Count; i++)
 		{
 			FloatStyles[i] = GetImGuiFloat(i);
@@ -416,11 +459,11 @@ public:
 		std::string code;
 		if (SetStylesCount > 0)
 		{
-			code += "ImGui.PopStyleVar(" + std::to_string(SetStylesCount) + ");\n";
+			code += "ImGui::PopStyleVar(" + std::to_string(SetStylesCount) + ");\n";
 		}
 		if (SetColorsCount > 0)
 		{
-			code += "ImGui.PopStyleColor(" + std::to_string(SetColorsCount) + ");\n";
+			code += "ImGui::PopStyleColor(" + std::to_string(SetColorsCount) + ");\n";
 		}
 		return code;
 	}
@@ -441,6 +484,7 @@ public:
 
 	void ResetColors()
 	{
+		EditedColors = 0;
 		for (int i = 0; i < ImGuiCol_COUNT; i++)
 		{
 			Colors[i] = ImGui::GetStyleColorVec4(i);
@@ -459,14 +503,24 @@ public:
 		{
 			if (const auto style_name_index = STYLE_NAMES.find(style); style_name_index != STYLE_NAMES.end())
 			{
+				const float old_value = FloatStyles[GetFloatStyleIndex(style)];
 				ImGui::InputFloat(style_name_index->second, &FloatStyles[GetFloatStyleIndex(style)]);
+				if (FLOAT_NOT_EQUAL(old_value, FloatStyles[GetFloatStyleIndex(style)]))
+				{
+					EditedStyles |= 1 << style;
+				}
 			}
 		}
 		else if ( 1 << style & IsImVec2Style)
 		{
 			if (const auto style_name_index = STYLE_NAMES.find(style); style_name_index != STYLE_NAMES.end())
 			{
+				const auto old_value = ImVec2Styles[GetImVec2StyleIndex(style)];
 				ImGui::InputFloat2(style_name_index->second, &ImVec2Styles[GetImVec2StyleIndex(style)].x);
+				if (!IMVEC2_IS_EQUAL(old_value, ImVec2Styles[GetImVec2StyleIndex(style)]))
+				{
+					EditedStyles |= 1 << style;
+				}
 			}
 		}
 	}
@@ -478,7 +532,12 @@ public:
 
 		if (const auto color_name_index = COLOR_NAMES.find(color); color_name_index != COLOR_NAMES.end())
 		{
+			const auto old_color = Colors[color];
 			ImGui::ColorEdit4(color_name_index->second, &Colors[color].x);
+			if (!COLOR_IS_EQUAL(old_color, Colors[color]))
+			{
+				EditedColors |= 1ULL << color;
+			}
 		}
 	}
 

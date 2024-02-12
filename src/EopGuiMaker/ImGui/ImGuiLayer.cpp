@@ -4,10 +4,12 @@
 #include "Application.h"
 #include "imgui.h"
 #include "Creator/Components/ButtonComponent.h"
+#include "Creator/Components/ChildComponent.h"
 #include "Events/MouseEvent.h"
 #include "GLFW/glfw3.h"
 #include "OpenGL/imgui_impl_glfw.h"
 #include "OpenGL/imgui_impl_opengl3.h"
+#include "ImGui/imgui_stdlib.h"
 
 namespace EopGuiMaker
 {
@@ -161,7 +163,7 @@ namespace EopGuiMaker
 
 
 		if (ImGui::BeginPopupModal("Set Window Parameters", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-		    ImGui::InputText("Window Name", ThisWindow->WindowName, IM_ARRAYSIZE(ThisWindow->WindowName));
+		    ImGui::InputText("Window Name", &ThisWindow->WindowName);
 		    ImGui::InputFloat2("Window Size", &ThisWindow->WindowSize.x);
 		    
 		    if (ImGui::Button("Set")) {
@@ -189,18 +191,6 @@ namespace EopGuiMaker
 		    ImGui::EndPopup();
 		}
 
-		bool itemBox = ImGui::BeginListBox("Items", ImVec2(320, 1000));
-		if (itemBox) {
-			bool Button = ImGui::Selectable("Button", false);
-			bool itemTwo = ImGui::Selectable("Item 2", false);
-			bool itemThree = ImGui::Selectable("Item 3", false);
-			if (Button) {
-				GUIMAKER_CORE_INFO("Added Button");
-				ThisWindow->PushComponent(new ButtonComponent("Button", ImVec2(100,50), ImVec2(0,0)));
-			}
-			ImGui::EndListBox();
-		}
-
 		if (ThisWindow->IsWindowOpen()) {
 			ThisWindow->DrawWindow();
 			SetSelectedComponent(ThisWindow->SelectedComponent);
@@ -215,6 +205,12 @@ namespace EopGuiMaker
 			}
 			ImGui::End();
 		}
+		if (ThisWindow != nullptr) {
+			ImGui::Begin("Window Properties");
+			ThisWindow->PropertiesWindow();
+			ImGui::End();
+		}
+		ItemListBox();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		/**
@@ -226,8 +222,112 @@ namespace EopGuiMaker
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Default blend function for ImGui
 		*/
 	}
+	
+	bool BUTTON_SELECTED = false;
+	bool CHILD_SELECTED = false;
+	void ImGuiLayer::ItemListBox()
+	{
+		if (bool item_box = ImGui::BeginListBox("Items", ImVec2(320, 200))) {
+			if (ImGui::Selectable("Button", false))
+			{
+				BUTTON_SELECTED = true;
+			}
+			if (ImGui::Selectable("Child", false)) 
+			{
+				CHILD_SELECTED = true;
+			}
+			if (BUTTON_SELECTED)
+			{
+				ImGui::OpenPopup("Create Button");
+				if (ImGui::BeginPopup("Create Button"))
+				{
+					std::string name = "Button_";
+					name += std::to_string(AddCount[ComponentType_Button]);
+					ImGui::InputText("Label", &name);
 
-	void EopGuiMaker::ImGuiLayer::OnAttach() {
+					std::string text = "Button";
+					ImGui::InputText("Text", &text);
+
+					auto size = ImVec2(100, 50);
+					ImGui::InputFloat2("Size", &size.x);
+					if (ImGui::Button("Create"))
+					{
+						CreateButtonWindow(name, size, text);
+						BUTTON_SELECTED = false;
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel"))
+					{
+						ImGui::CloseCurrentPopup();
+						BUTTON_SELECTED = false;
+					}
+					ImGui::EndPopup();
+				}
+			}
+			if (CHILD_SELECTED)
+			{
+				ImGui::OpenPopup("Create Child");
+				if (ImGui::BeginPopup("Create Child"))
+				{
+					std::string name = "Child_";
+					name += std::to_string(AddCount[ComponentType_Child]);
+					auto size = ImVec2(100, 50);
+					ImGui::InputText("Label", &name);
+					ImGui::InputFloat2("Name", &size.x);
+					if (ImGui::Button("Create"))
+					{
+						CreateChildWindow(name, size);
+						ImGui::CloseCurrentPopup();
+						CHILD_SELECTED = false;
+					}
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel"))
+					{
+						ImGui::CloseCurrentPopup();
+						CHILD_SELECTED = false;
+					}
+					ImGui::EndPopup();
+				}
+			}
+			ImGui::EndListBox();
+		}
+	}
+
+	bool ImGuiLayer::IsLabelValid(const std::string& label)
+	{
+		if (label.empty())
+		{
+			GUIMAKER_CORE_ERROR("Label is empty");
+			return false;
+		}
+		if (const auto match = Items.find(label); match != Items.end())
+		{
+			return false;
+		}
+		return true;
+	}
+
+	void ImGuiLayer::CreateChildWindow(const std::string& name, const ImVec2 size)
+	{
+		GUIMAKER_CORE_INFO("Added Child");
+		auto* new_child = new ChildComponent(name.c_str(), size, ImVec2(0, 0));
+		Items.insert(std::make_pair(name, new_child));
+		AddCount[ComponentType_Child]++;
+		ThisWindow->PushComponent(new_child);
+		ThisWindow->Children.push_back(new_child);
+	}
+
+	void ImGuiLayer::CreateButtonWindow(const std::string& name, const ImVec2 size, const std::string& text)
+	{
+		GUIMAKER_CORE_INFO("Added Button");
+		auto* new_button = new ButtonComponent(name, size, text);
+		AddCount[ComponentType_Button]++;
+		Items.insert(std::make_pair(name, new_button));
+		ThisWindow->PushComponent(new_button);
+	}
+
+	void ImGuiLayer::OnAttach() {
 		Context = ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 

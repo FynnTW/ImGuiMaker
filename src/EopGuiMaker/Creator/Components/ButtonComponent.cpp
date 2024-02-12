@@ -7,12 +7,8 @@ namespace EopGuiMaker
 		ImGui::Text("Button Properties");
 
 		DrawResetButtons();
-
-		char* text = new char[100];
-		text = const_cast<char*>(Label.c_str());
-		ImGui::InputText("Text", text, 100);
-		if (!std::string(text).empty())
-			Label = text;
+		
+		ImGui::InputText("Text", &Text);
 
 		DrawSnapOptions();
 		DrawProperties();
@@ -21,7 +17,7 @@ namespace EopGuiMaker
 
 	ButtonComponent* ButtonComponent::Clone()
 	{
-		auto* clone = new ButtonComponent(Label.c_str(), Size, Position);
+		auto* clone = new ButtonComponent(Label, Size, Text);
 		clone->IsSnappedPos = IsSnappedPos;
 		clone->IsSnappedSize = IsSnappedSize;
 		clone->Styles = StyleSettings(Styles);
@@ -35,7 +31,7 @@ namespace EopGuiMaker
 	{
 		SetStyles();
 		ImGui::SetCursorPos(Position);
-		if (ImGui::Button(Label.c_str(), Size))
+		if (ImGui::Button(Text.c_str(), Size))
 		{
 
 		}
@@ -47,7 +43,7 @@ namespace EopGuiMaker
 		std::string code;
 		code += Styles.GenerateStylesCode();
 		code += fmt::format("ImGui::SetCursorPos({{{}f, {}f}});\n", Position.x, Position.y);
-		code += fmt::format("if (ImGui::Button(\"{}\", {{{}f, {}f}}))\n", Label.c_str(), Size.x, Size.y);
+		code += fmt::format("if (ImGui::Button(\"{}\", {{{}f, {}f}}))\n", Text.c_str(), Size.x, Size.y);
 		code += fmt::format("{{\n");
 		code += fmt::format("\n");
 		code += fmt::format("}}\n");
@@ -60,7 +56,7 @@ namespace EopGuiMaker
 		std::string code;
 		code += Styles.GenerateStylesLuaCode();
 		code += fmt::format("ImGui.SetCursorPos({}, {});\n", Position.x, Position.y);
-		code += fmt::format("if ImGui.Button(\"{}\", {}, {}) then\n", Label.c_str(), Size.x, Size.y);
+		code += fmt::format("if ImGui.Button(\"{}\", {}, {}) then\n", Text.c_str(), Size.x, Size.y);
 		code += fmt::format("\n");
 		code += fmt::format("end\n");
 		code += Styles.GeneratePopLuaCode();

@@ -1,10 +1,12 @@
 #pragma once
 #include "EopGuiMaker/Creator/Components/Components.h"
 
-class Component;
 
 namespace EopGuiMaker
 {
+	class Component;
+	class ChildComponent;
+
 	class GUIMAKER_API UserWindow
 	{
 	public:
@@ -16,15 +18,21 @@ namespace EopGuiMaker
 		bool IsWindowOpen() const;
 		bool IsGridEnabled() const;
 		void SetGridSize(int rows, int columns);
-		void DrawGrid(bool draw);
+		void DrawGrid() const;
 		void CloseWindow();
+		ImVec2 GetSpacing() const;
 		void OpenWindow();
 		void DrawWindow();
-		char WindowName[128] = "New Window";
+		void GetWindowFlags();
+		std::string WindowName = "New Window";
 		ImVec2 WindowSize = { 1280.0f, 720.0f };
 		ImVec2 WindowPosition = { 0.0, 0.0};
 		void SnapComponents();
+		void DrawComponent(Component* component);
+		void ComponentKeyPress();
 		bool EnableGrid = true;
+		int Flags = ImGuiWindowFlags_NoCollapse |
+					ImGuiWindowFlags_NoTitleBar;
 		struct Grid
 		{
 			int Columns;
@@ -40,10 +48,15 @@ namespace EopGuiMaker
 		StyleSettings* CopiedStyle;
 		std::string GetOutPutCode();
 		std::string GetOutPutCodeLua();
+		StyleSettings Style;
+		std::vector<Component*> DeletionComponents;
+		std::vector<ChildComponent*> Children;
 
 		std::vector<Component*>::iterator begin() { return m_Components.begin(); }
 		std::vector<Component*>::iterator end() { return m_Components.end(); }
 		void SetStyles();
+		void PopStyles() const;
+		void PropertiesWindow();
 	private:
 		bool m_IsWindowOpen = false;
 		std::vector<Component*> m_Components;
