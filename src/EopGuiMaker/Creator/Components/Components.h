@@ -31,6 +31,7 @@ namespace EopGuiMaker
 		void SetSize(ImVec2 size, float grid_spacing_x, float grid_spacing_y);
 		ImVec2 Position;
 		ImVec2 Size;
+		void DrawParentsBox();
 		virtual Component* Clone(){ return this;}
 		void TextSettings()
 		{
@@ -54,7 +55,7 @@ namespace EopGuiMaker
 		void PopStyles() const;
 		ImVec2 ScreenSpacePos;
 		ImVec2 ScreenSpacePosMax;
-		ChildComponent* ParentChild;
+		ChildComponent* ParentChild = nullptr;
 		int Flags = 0;
 		virtual std::string GenerateCode(){return "";}
 		virtual std::string GenerateLuaCode(){return "";}

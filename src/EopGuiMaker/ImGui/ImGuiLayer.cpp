@@ -225,14 +225,16 @@ namespace EopGuiMaker
 	
 	bool BUTTON_SELECTED = false;
 	bool CHILD_SELECTED = false;
+	bool BUTTON_INC = false;
+	bool CHILD_INC = false;
 	void ImGuiLayer::ItemListBox()
 	{
 		if (bool item_box = ImGui::BeginListBox("Items", ImVec2(320, 200))) {
-			if (ImGui::Selectable("Button", false))
+			if (ImGui::Selectable("Button"))
 			{
 				BUTTON_SELECTED = true;
 			}
-			if (ImGui::Selectable("Child", false)) 
+			if (ImGui::Selectable("Child", false))
 			{
 				CHILD_SELECTED = true;
 			}
@@ -241,20 +243,23 @@ namespace EopGuiMaker
 				ImGui::OpenPopup("Create Button");
 				if (ImGui::BeginPopup("Create Button"))
 				{
-					std::string name = "Button_";
-					name += std::to_string(AddCount[ComponentType_Button]);
+					static std::string name = "Button_";
+					if (!BUTTON_INC)
+						name += std::to_string(AddCount[ComponentType_Button]);
+					BUTTON_INC = true;
 					ImGui::InputText("Label", &name);
 
-					std::string text = "Button";
+					static std::string text = "Button";
 					ImGui::InputText("Text", &text);
 
-					auto size = ImVec2(100, 50);
+					static auto size = ImVec2(100, 50);
 					ImGui::InputFloat2("Size", &size.x);
 					if (ImGui::Button("Create"))
 					{
 						CreateButtonWindow(name, size, text);
-						BUTTON_SELECTED = false;
 						ImGui::CloseCurrentPopup();
+						BUTTON_SELECTED = false;
+						BUTTON_INC = false;
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel"))
@@ -270,16 +275,19 @@ namespace EopGuiMaker
 				ImGui::OpenPopup("Create Child");
 				if (ImGui::BeginPopup("Create Child"))
 				{
-					std::string name = "Child_";
-					name += std::to_string(AddCount[ComponentType_Child]);
-					auto size = ImVec2(100, 50);
+					static std::string name = "Child_";
+					if (!CHILD_INC)
+						name += std::to_string(AddCount[ComponentType_Child]);
+					CHILD_INC = true;
+					static auto size = ImVec2(100, 50);
 					ImGui::InputText("Label", &name);
-					ImGui::InputFloat2("Name", &size.x);
+					ImGui::InputFloat2("Size", &size.x);
 					if (ImGui::Button("Create"))
 					{
 						CreateChildWindow(name, size);
 						ImGui::CloseCurrentPopup();
 						CHILD_SELECTED = false;
+						CHILD_INC = false;
 					}
 					ImGui::SameLine();
 					if (ImGui::Button("Cancel"))
@@ -301,7 +309,7 @@ namespace EopGuiMaker
 			GUIMAKER_CORE_ERROR("Label is empty");
 			return false;
 		}
-		if (const auto match = Items.find(label); match != Items.end())
+		if (const auto match = ITEMS.find(label); match != ITEMS.end())
 		{
 			return false;
 		}
@@ -312,7 +320,7 @@ namespace EopGuiMaker
 	{
 		GUIMAKER_CORE_INFO("Added Child");
 		auto* new_child = new ChildComponent(name.c_str(), size, ImVec2(0, 0));
-		Items.insert(std::make_pair(name, new_child));
+		ITEMS.insert(std::make_pair(name, new_child));
 		AddCount[ComponentType_Child]++;
 		ThisWindow->PushComponent(new_child);
 		ThisWindow->Children.push_back(new_child);
@@ -323,7 +331,7 @@ namespace EopGuiMaker
 		GUIMAKER_CORE_INFO("Added Button");
 		auto* new_button = new ButtonComponent(name, size, text);
 		AddCount[ComponentType_Button]++;
-		Items.insert(std::make_pair(name, new_button));
+		ITEMS.insert(std::make_pair(name, new_button));
 		ThisWindow->PushComponent(new_button);
 	}
 

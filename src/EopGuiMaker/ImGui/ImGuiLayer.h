@@ -29,12 +29,12 @@ namespace EopGuiMaker
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		void SetSelectedComponent(Component* component) {m_SelectedComponent = component;}
 		[[nodiscard]] Component* GetSelectedComponent() const { return m_SelectedComponent; }
-		std::unordered_map<std::string, Component*> Items;
 		ImGuiContext* Context;
 		StyleSettings* CopiedStyle;
 	private:
 		float m_Time = 0.0f;
 		Component* m_SelectedComponent;
 	};
+	static std::unordered_map<std::string, Component*> ITEMS;
 	
 }

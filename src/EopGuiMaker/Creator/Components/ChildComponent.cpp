@@ -11,7 +11,6 @@ namespace EopGuiMaker
 			{
 				DrawResetButtons();
 				DrawSnapOptions();
-				ImGui::InputText("Label", &Label, 100);
 				for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 				{
 					Styles.GetPropertyEditor(i);
@@ -111,7 +110,7 @@ namespace EopGuiMaker
 		ImGui::BeginChild(Label.c_str(), Size, Flags);
 		for (auto it = m_Components.end(); it != m_Components.begin(); )
 		{
-			Component* component = *it;
+			const auto component = *--it;
 			ParentWindow->DrawComponent(component);
 		}
 		if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered())

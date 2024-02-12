@@ -258,7 +258,6 @@ namespace EopGuiMaker
 		{
 			if (ImGui::BeginTabItem("Window Properties"))
 			{
-				ImGui::InputText("Window Name", &WindowName, 100);
 				for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 				{
 					Style.GetPropertyEditor(i);

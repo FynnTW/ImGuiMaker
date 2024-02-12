@@ -1,6 +1,8 @@
 #include "gmpch.h"
 #include "Components.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 namespace EopGuiMaker
 {
 	void Component::SetPosition(const ImVec2 position, const float grid_spacing_x, const float grid_spacing_y)
@@ -81,6 +83,7 @@ namespace EopGuiMaker
 		if (ImGui::Button("Reset Colors"))
 			Styles.ResetColors();
 		ImGui::InputText("Label", &Label);
+		DrawParentsBox();
 	}
 	
 	void Component::DrawProperties()
@@ -95,6 +98,39 @@ namespace EopGuiMaker
 			if (1ULL << i & ActiveColors)
 				Styles.GetColorEditor(i);
 		}
+	}
+
+	void Component::DrawParentsBox()
+	{
+		if (ParentChild)
+		{
+			ImGui::Text("Parent: %s", ParentChild->Label.c_str());
+			if (ImGui::Button("Add To Main Window"))
+			{
+				ParentChild->PopComponent(this);
+				ParentWindow->PushComponent(this);
+			}
+		}
+		else
+		{
+			ImGui::Text("Parent: Main Window");
+		}
+		if (!ParentWindow->Children.empty())
+		{
+			if (ImGui::BeginListBox("Children"))
+			{
+				for (const auto& child : ParentWindow->Children)
+				{
+					if (ImGui::Selectable(child->Label.c_str()))
+					{
+						ParentWindow->PopComponent(this);
+						child->PushComponent(this);
+					}
+				}
+				ImGui::EndListBox();
+			}
+		}
+
 	}
 	
 
