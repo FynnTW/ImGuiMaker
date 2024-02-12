@@ -52,6 +52,26 @@ namespace EopGuiMaker
 		ImGui::Checkbox("Is Size Snapped", &IsSnappedSize);
 		ImGui::Checkbox("Is Position Snapped", &IsSnappedPos);
 	}
+
+	void Component::SetStyles()
+	{
+		Styles.SetStylesCount = 0;
+		Styles.SetColorsCount = 0;
+
+		for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
+			if (1 << i & ActiveStyles)
+				Styles.SetStyle(i);
+
+		for (int i = 0; i < ImGuiCol_COUNT; i++)
+			if (1ULL << i & ActiveColors)
+				Styles.SetColor(i);
+	}
+
+	void Component::PopStyles() const
+	{
+		Styles.PopStyles();
+		Styles.PopColors();
+	}
 	
 	void Component::DrawResetButtons()
 	{

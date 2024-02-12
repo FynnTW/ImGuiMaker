@@ -33,42 +33,37 @@ namespace EopGuiMaker
 
 	void ButtonComponent::Draw()
 	{
-		
-		for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
-			if (1 << i & ActiveStyles)
-				Styles.SetStyle(i);
-
-		for (int i = 0; i < ImGuiCol_COUNT; i++)
-			if (1ULL << i & ActiveColors)
-				Styles.SetColor(i);
-
+		SetStyles();
 		ImGui::SetCursorPos(Position);
 		if (ImGui::Button(Label.c_str(), Size))
 		{
 
 		}
-		Styles.PopStyles();
-		Styles.PopColors();
+		PopStyles();
 	}
 
 	std::string ButtonComponent::GenerateCode()
 	{
 		std::string code;
+		code += Styles.GenerateStylesCode();
 		code += fmt::format("ImGui::SetCursorPos({{{}f, {}f}});\n", Position.x, Position.y);
 		code += fmt::format("if (ImGui::Button(\"{}\", {{{}f, {}f}}))\n", Label.c_str(), Size.x, Size.y);
 		code += fmt::format("{{\n");
 		code += fmt::format("\n");
 		code += fmt::format("}}\n");
+		code += Styles.GeneratePopCode();
 		return code;
 	}
 
 	std::string ButtonComponent::GenerateLuaCode()
 	{
 		std::string code;
+		code += Styles.GenerateStylesLuaCode();
 		code += fmt::format("ImGui.SetCursorPos({}, {});\n", Position.x, Position.y);
 		code += fmt::format("if ImGui.Button(\"{}\", {}, {}) then\n", Label.c_str(), Size.x, Size.y);
 		code += fmt::format("\n");
 		code += fmt::format("end\n");
+		code += Styles.GeneratePopLuaCode();
 		return code;
 	}
 }

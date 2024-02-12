@@ -56,6 +56,38 @@ inline std::unordered_map<int, const char*> STYLE_NAMES = {
 	{ImGuiStyleVar_SeparatorTextPadding,"Separator Text Padding"},
 };
 
+inline std::unordered_map<int, const char*> STYLE_ID = {
+	{ImGuiStyleVar_Alpha,"Alpha"},
+	{ImGuiStyleVar_DisabledAlpha,"DisabledAlpha"},
+	{ImGuiStyleVar_WindowPadding,"WindowPadding"},
+	{ImGuiStyleVar_WindowRounding,"WindowRounding"},
+	{ImGuiStyleVar_WindowBorderSize,"WindowBorderSize"},
+	{ImGuiStyleVar_WindowMinSize,"WindowMinSize"},
+	{ImGuiStyleVar_WindowTitleAlign,"WindowTitleAlign"},
+	{ImGuiStyleVar_ChildRounding,"ChildRounding"},
+	{ImGuiStyleVar_ChildBorderSize,"ChildBorderSize"},
+	{ImGuiStyleVar_PopupRounding,"PopupRounding"},
+	{ImGuiStyleVar_PopupBorderSize,"PopupBorderSize"},
+	{ImGuiStyleVar_FramePadding,"FramePadding"},
+	{ImGuiStyleVar_FrameRounding,"FrameRounding"},
+	{ImGuiStyleVar_FrameBorderSize,"FrameBorderSize"},
+	{ImGuiStyleVar_ItemSpacing,"ItemSpacing"},
+	{ImGuiStyleVar_ItemInnerSpacing,"ItemInnerSpacing"},
+	{ImGuiStyleVar_IndentSpacing,"IndentSpacing"},
+	{ImGuiStyleVar_CellPadding,"CellPadding"},
+	{ImGuiStyleVar_ScrollbarSize,"ScrollbarSize"},
+	{ImGuiStyleVar_ScrollbarRounding,"ScrollbarRounding"},
+	{ImGuiStyleVar_GrabMinSize,"GrabMinSize"},
+	{ImGuiStyleVar_GrabRounding,"GrabRounding"},
+	{ImGuiStyleVar_TabRounding,"TabRounding"},
+	{ImGuiStyleVar_TabBarBorderSize,"TabBarBorderSize"},
+	{ImGuiStyleVar_ButtonTextAlign,"ButtonTextAlign"},
+	{ImGuiStyleVar_SelectableTextAlign,"SelectableTextAlign"},
+	{ImGuiStyleVar_SeparatorTextBorderSize,"SeparatorTextBorderSize"},
+	{ImGuiStyleVar_SeparatorTextAlign,"SeparatorTextAlign"},
+	{ImGuiStyleVar_SeparatorTextPadding,"SeparatorTextPadding"},
+};
+
 inline std::unordered_map<int, const char*> COLOR_NAMES = {
 	{ImGuiCol_Text,"Text"},
 	{ImGuiCol_TextDisabled,"Text Disabled"},
@@ -110,6 +142,62 @@ inline std::unordered_map<int, const char*> COLOR_NAMES = {
 	{ImGuiCol_NavWindowingHighlight,"Nav Windowing Highlight"},
 	{ImGuiCol_NavWindowingDimBg,"Nav Windowing Dim Background"},
 	{ImGuiCol_ModalWindowDimBg,"Modal Window Dim Background"},
+};
+
+inline std::unordered_map<int, const char*> COLOR_ID = {
+	{ImGuiCol_Text,"Text"},
+	{ImGuiCol_TextDisabled,"TextDisabled"},
+	{ImGuiCol_WindowBg,"WindowBg"},
+	{ImGuiCol_ChildBg,"ChildBg"},
+	{ImGuiCol_PopupBg,"PopupBg"},
+	{ImGuiCol_Border,"Border"},
+	{ImGuiCol_BorderShadow,"BorderShadow"},
+	{ImGuiCol_FrameBg,"FrameBg"},
+	{ImGuiCol_FrameBgHovered,"FrameBgHovered"},
+	{ImGuiCol_FrameBgActive,"FrameBgActive"},
+	{ImGuiCol_TitleBg,"TitleBg"},
+	{ImGuiCol_TitleBgActive,"TitleBgActive"},
+	{ImGuiCol_TitleBgCollapsed,"TitleBgCollapsed"},
+	{ImGuiCol_MenuBarBg,"MenuBarBg"},
+	{ImGuiCol_ScrollbarBg,"ScrollbarBg"},
+	{ImGuiCol_ScrollbarGrab,"ScrollbarGrab"},
+	{ImGuiCol_ScrollbarGrabHovered,"ScrollbarGrabHovered"},
+	{ImGuiCol_ScrollbarGrabActive,"ScrollbarGrabActive"},
+	{ImGuiCol_CheckMark,"CheckMark"},
+	{ImGuiCol_SliderGrab,"SliderGrab"},
+	{ImGuiCol_SliderGrabActive,"SliderGrabActive"},
+	{ImGuiCol_Button,"Button"},
+	{ImGuiCol_ButtonHovered,"ButtonHovered"},
+	{ImGuiCol_ButtonActive,"ButtonActive"},
+	{ImGuiCol_Header,"Header"},
+	{ImGuiCol_HeaderHovered,"HeaderHovered"},
+	{ImGuiCol_HeaderActive,"HeaderActive"},
+	{ImGuiCol_Separator,"Separator"},
+	{ImGuiCol_SeparatorHovered,"SeparatorHovered"},
+	{ImGuiCol_SeparatorActive,"SeparatorActive"},
+	{ImGuiCol_ResizeGrip,"ResizeGrip"},
+	{ImGuiCol_ResizeGripHovered,"ResizeGripHovered"},
+	{ImGuiCol_ResizeGripActive,"ResizeGripActive"},
+	{ImGuiCol_Tab,"Tab"},
+	{ImGuiCol_TabHovered,"TabHovered"},
+	{ImGuiCol_TabActive,"TabActive"},
+	{ImGuiCol_TabUnfocused,"TabUnfocused"},
+	{ImGuiCol_TabUnfocusedActive,"TabUnfocusedActive"},
+	{ImGuiCol_PlotLines,"PlotLines"},
+	{ImGuiCol_PlotLinesHovered,"PlotLinesHovered"},
+	{ImGuiCol_PlotHistogram,"PlotHistogram"},
+	{ImGuiCol_PlotHistogramHovered,"PlotHistogramHovered"},
+	{ImGuiCol_TableHeaderBg,"TableHeaderBg"},
+	{ImGuiCol_TableBorderStrong,"TableBorderStrong"},
+	{ImGuiCol_TableBorderLight,"TableBorderLight"},
+	{ImGuiCol_TableRowBg,"TableRowBg"},
+	{ImGuiCol_TableRowBgAlt,"TableRowBgAlt"},
+	{ImGuiCol_TextSelectedBg,"TextSelectedBg"},
+	{ImGuiCol_DragDropTarget,"DragDropTarget"},
+	{ImGuiCol_NavHighlight,"NavHighlight"},
+	{ImGuiCol_NavWindowingHighlight,"NavWindowingHighlight"},
+	{ImGuiCol_NavWindowingDimBg,"NavWindowingDimBg"},
+	{ImGuiCol_ModalWindowDimBg,"ModalWindowDimBg"},
 };
 
 enum ImVec2Style
@@ -201,13 +289,10 @@ public:
 		}
 	}
 
-	void PopStyles()
+	void PopStyles() const
 	{
 		if (SetStylesCount > 0)
-		{
 			ImGui::PopStyleVar(SetStylesCount);
-			SetStylesCount = 0;
-		}
 	}
 
 	void SetColor(const int color)
@@ -222,6 +307,98 @@ public:
 		}
 	}
 
+	std::string GenerateStylesCode()
+	{
+		std::string code;
+		if (SetStylesCount > 0)
+		{
+			
+			for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
+			{
+				if (IsFloatStyle & (1 << i))
+				{
+					if (const int float_index = GetFloatStyleIndex(i); FLOAT_NOT_EQUAL(FloatStyles[float_index], GetImGuiFloat(float_index)))
+					{
+						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
+						{
+							code += fmt::format("ImGui::PushStyleVar(ImGuiStyleVar_{}, {}f);\n", style_id_index->second, FloatStyles[float_index]);
+						}
+					}
+				}
+				else if (IsImVec2Style & (1 << i))
+				{
+					if (const int im_vec2_index = GetImVec2StyleIndex(i); !IMVEC2_IS_EQUAL(ImVec2Styles[im_vec2_index], GetImGuiImVec2(im_vec2_index)))
+					{
+						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
+						{
+							code += fmt::format("ImGui::PushStyleVar(ImGuiStyleVar_{}, ImVec2({}f, {}f));\n", style_id_index->second, ImVec2Styles[im_vec2_index].x, ImVec2Styles[im_vec2_index].y);
+						}
+					}
+				}
+			}
+		}
+		if (SetColorsCount > 0)
+		{
+			for (int i = 0; i < ImGuiCol_COUNT; i++)
+			{
+				if (!COLOR_IS_EQUAL(Colors[i], ImGui::GetStyleColorVec4(i)))
+				{
+					if (const auto color_id_index = COLOR_ID.find(i); color_id_index != COLOR_ID.end())
+					{
+						code += fmt::format("ImGui::PushStyleColor(ImGuiCol_{}, ImVec4({}f, {}f, {}f, {}f));\n", color_id_index->second, Colors[i].x, Colors[i].y, Colors[i].z, Colors[i].w);
+					}
+				}
+			}
+		}
+		return code;
+	}
+
+	std::string GenerateStylesLuaCode()
+	{
+		std::string code;
+		if (SetStylesCount > 0)
+		{
+			
+			for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
+			{
+				if (IsFloatStyle & (1 << i))
+				{
+					if (const int float_index = GetFloatStyleIndex(i); FLOAT_NOT_EQUAL(FloatStyles[float_index], GetImGuiFloat(float_index)))
+					{
+						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
+						{
+							code += fmt::format("ImGui.PushStyleVar(ImGuiStyleVar.{}, {})\n", style_id_index->second, FloatStyles[float_index]);
+						}
+					}
+				}
+				else if (IsImVec2Style & (1 << i))
+				{
+					if (const int im_vec2_index = GetImVec2StyleIndex(i); !IMVEC2_IS_EQUAL(ImVec2Styles[im_vec2_index], GetImGuiImVec2(im_vec2_index)))
+					{
+						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
+						{
+							code += fmt::format("ImGui.PushStyleVar(ImGuiStyleVar.{}, {}, {})\n", style_id_index->second, ImVec2Styles[im_vec2_index].x, ImVec2Styles[im_vec2_index].y);
+						}
+					}
+				}
+			}
+		}
+		if (SetColorsCount > 0)
+		{
+			for (int i = 0; i < ImGuiCol_COUNT; i++)
+			{
+				if (!COLOR_IS_EQUAL(Colors[i], ImGui::GetStyleColorVec4(i)))
+				{
+					if (const auto color_id_index = COLOR_ID.find(i); color_id_index != COLOR_ID.end())
+					{
+						code += fmt::format("ImGui.PushStyleColor(ImGuiCol.{}, {}, {}, {}, {})\n", color_id_index->second, Colors[i].x, Colors[i].y, Colors[i].z, Colors[i].w);
+					}
+				}
+			}
+		}
+		return code;
+	}
+
 	void ResetStyles()
 	{
 		for (int i = 0; i < FloatStyle_Count; i++)
@@ -234,6 +411,34 @@ public:
 		}
 	}
 
+	[[nodiscard]] std::string GeneratePopCode() const
+	{
+		std::string code;
+		if (SetStylesCount > 0)
+		{
+			code += "ImGui.PopStyleVar(" + std::to_string(SetStylesCount) + ");\n";
+		}
+		if (SetColorsCount > 0)
+		{
+			code += "ImGui.PopStyleColor(" + std::to_string(SetColorsCount) + ");\n";
+		}
+		return code;
+	}
+
+[[nodiscard]] std::string GeneratePopLuaCode() const
+	{
+		std::string code;
+		if (SetStylesCount > 0)
+		{
+			code += "ImGui.PopStyleVar(" + std::to_string(SetStylesCount) + ")\n";
+		}
+		if (SetColorsCount > 0)
+		{
+			code += "ImGui.PopStyleColor(" + std::to_string(SetColorsCount) + ")\n";
+		}
+		return code;
+	}
+
 	void ResetColors()
 	{
 		for (int i = 0; i < ImGuiCol_COUNT; i++)
@@ -242,13 +447,10 @@ public:
 		}
 	}
 
-	void PopColors()
+	void PopColors() const
 	{
 		if (SetColorsCount > 0)
-		{
 			ImGui::PopStyleColor(SetColorsCount);
-			SetColorsCount = 0;
-		}
 	}
 
 	void GetPropertyEditor(const int style)
@@ -277,7 +479,6 @@ public:
 		if (const auto color_name_index = COLOR_NAMES.find(color); color_name_index != COLOR_NAMES.end())
 		{
 			ImGui::ColorEdit4(color_name_index->second, &Colors[color].x);
-			ImGui::SameLine();
 		}
 	}
 

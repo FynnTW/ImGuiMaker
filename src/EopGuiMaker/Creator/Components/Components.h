@@ -39,6 +39,8 @@ namespace EopGuiMaker
 		void DrawSnapOptions();
 		void DrawResetButtons();
 		void DrawProperties();
+		void SetStyles();
+		void PopStyles() const;
 		virtual std::string GenerateCode(){return "";}
 		virtual std::string GenerateLuaCode(){return "";}
 		UINT32 ActiveStyles;
