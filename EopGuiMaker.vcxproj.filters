@@ -79,6 +79,8 @@
     <ClInclude Include="src\gmpch.h" />
     <ClInclude Include="src\EopGuiMaker\ImGui\themeManager.h" />
     <ClInclude Include="src\EopGuiMaker\ImGui\toml.hpp" />
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\StyleSettings.h" />
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\ButtonComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp">
@@ -110,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="src\gmpch.cpp" />
     <ClCompile Include="src\EopGuiMaker\ImGui\themeManager.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\StyleSettings.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\Components.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\ButtonComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\EopGuiMaker\OpenGL\vertex_shader.glsl" />

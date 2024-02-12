@@ -3,6 +3,9 @@
 #include "EopGuiMaker/Layer.h"
 #include "EopGuiMaker/Events/ApplicationEvent.h"
 #include "EopGuiMaker/Events/MouseEvent.h"
+#include "EopGuiMaker/Creator/Components/StyleSettings.h"
+
+class UserWindow;
 
 namespace EopGuiMaker
 {
@@ -22,6 +25,7 @@ namespace EopGuiMaker
 		void SetSelectedComponent(Component* component) {m_SelectedComponent = component;}
 		Component* GetSelectedComponent() const { return m_SelectedComponent; }
 		ImGuiContext* Context;
+		StyleSettings* CopiedStyle;
 	private:
 		float m_Time = 0.0f;
 		Component* m_SelectedComponent;

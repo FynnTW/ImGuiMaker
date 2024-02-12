@@ -3,7 +3,7 @@
 
 #include "Application.h"
 #include "imgui.h"
-#include "Events/KeyEvent.h"
+#include "Creator/Components/ButtonComponent.h"
 #include "Events/MouseEvent.h"
 #include "GLFW/glfw3.h"
 #include "OpenGL/imgui_impl_glfw.h"
@@ -196,7 +196,7 @@ namespace EopGuiMaker
 			bool itemThree = ImGui::Selectable("Item 3", false);
 			if (Button) {
 				GUIMAKER_CORE_INFO("Added Button");
-				ThisWindow->PushComponent(new ButtonComponent("Button", ImVec2(100,50), ImVec2(0,0) ));
+				ThisWindow->PushComponent(new ButtonComponent("Button", ImVec2(100,50), ImVec2(0,0)));
 			}
 			ImGui::EndListBox();
 		}

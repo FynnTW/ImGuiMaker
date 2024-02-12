@@ -1,6 +1,7 @@
 #pragma once
-#include "Components/Components.h"
+#include "EopGuiMaker/Creator/Components/Components.h"
 
+class Component;
 
 namespace EopGuiMaker
 {
@@ -33,16 +34,16 @@ namespace EopGuiMaker
 		int GridAlpha = 120;
 		void PushComponent(Component* component);
 		void PopComponent(const Component* component);
-		Component* GetSelectedComponent(ImGuiContext* context);
 		Component* HoveredComponent;
 		Component* SelectedComponent;
 		Component* CopiedComponent;
+		StyleSettings* CopiedStyle;
 		std::string GetOutPutCode();
 		std::string GetOutPutCodeLua();
 
-
 		std::vector<Component*>::iterator begin() { return m_Components.begin(); }
 		std::vector<Component*>::iterator end() { return m_Components.end(); }
+		void SetStyles();
 	private:
 		bool m_IsWindowOpen = false;
 		std::vector<Component*> m_Components;

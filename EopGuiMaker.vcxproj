@@ -108,7 +108,9 @@
     <ClInclude Include="src\EopGuiMaker.h" />
     <ClInclude Include="src\EopGuiMaker\Application.h" />
     <ClInclude Include="src\EopGuiMaker\Core.h" />
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\ButtonComponent.h" />
     <ClInclude Include="src\EopGuiMaker\Creator\Components\Components.h" />
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\StyleSettings.h" />
     <ClInclude Include="src\EopGuiMaker\Creator\UserWindow.h" />
     <ClInclude Include="src\EopGuiMaker\EntryPoint.h" />
     <ClInclude Include="src\EopGuiMaker\Events\ApplicationEvent.h" />
@@ -130,6 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\ButtonComponent.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\Components.cpp" />
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\StyleSettings.cpp" />
     <ClCompile Include="src\EopGuiMaker\Creator\UserWindow.cpp" />
     <ClCompile Include="src\EopGuiMaker\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\EopGuiMaker\ImGui\themeManager.cpp" />
