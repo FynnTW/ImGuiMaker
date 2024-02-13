@@ -80,6 +80,27 @@ namespace EopGuiMaker
 		}
 	}
 
+	void UserWindow::SetFont()
+	{
+		Style.PushedFont = false;
+		if (!Style.Font.empty())
+		{
+			if (FONTS.find(Style.Font) == FONTS.end()) {
+				return;
+			}
+			ImGui::PushFont(FONTS[Style.Font]);
+			Style.PushedFont = true;
+		}
+	}
+
+	void UserWindow::PopFont() const
+	{
+		if (Style.PushedFont)
+		{
+			ImGui::PopFont();
+		}
+	}
+
 #define IMVEC2_ADD(a, b) ImVec2((a).x + (b).x, (a).y + (b).y)
 	
 	bool IS_DRAGGING = false; // Add a flag to track the drag state
@@ -90,29 +111,25 @@ namespace EopGuiMaker
 	ImVec2 TEMP_POS; // Starting position of the drag
 	ImVec2 ORIGINAL_SIZE; // Starting position of the drag
 	ImVec2 TEMP_SIZE; // Starting position of the drag
+	bool ARRAY_CHANGED = false;
 	constexpr float handle_radius = 8.0f; // Radius of the handle
 	void UserWindow::DrawWindow()
 	{
 		SetStyles();
-
-		if (SelectedComponent && SelectedComponent->Type == ComponentType_Child && Flags & ~ImGuiWindowFlags_NoMove)
-		{
-			Flags |= ImGuiWindowFlags_NoMove;
-			USER_WANT_MOVE = true;
-		}
-		else if (USER_WANT_MOVE)
-			Flags &= ~ImGuiWindowFlags_NoMove;
-
+		SetFont();
 		ImGui::Begin(WindowName.c_str(), &m_IsWindowOpen, Flags);
 
 		WindowSize = ImGui::GetWindowSize();
 		WindowPosition = ImGui::GetWindowPos();
 		DrawGrid();
-
+		
+		ARRAY_CHANGED = false;
 		for (auto it = m_Components.end(); it != m_Components.begin(); )
 		{
 			const auto component = *--it;
 			DrawComponent(component);
+			if (ARRAY_CHANGED)
+				break;
 		}
 
 		for (auto it = DeletionComponents.rbegin(); it != DeletionComponents.rend();)
@@ -128,6 +145,7 @@ namespace EopGuiMaker
 
 		ImGui::End();
 		PopStyles();
+		PopFont();
 	}
 
 	ImVec2 UserWindow::GetSpacing() const
@@ -220,14 +238,36 @@ namespace EopGuiMaker
 
 			PREV_POS = mouse_pos;
 			GUIMAKER_APP_INFO("Component Dragged {0}, {1}, {2}, {3}, {4}, {5}", SelectedComponent->Position.x,  SelectedComponent->Position.y, mouse_pos.x, mouse_pos.y, PREV_POS.x, PREV_POS.y);
-            if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-                IS_DRAGGING = false; // Stop dragging
-                IS_RESIZING = false; // 
-				PREV_POS = ImVec2(0, 0);
-                ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
-            }
 		}
         if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+			if (IS_DRAGGING)
+			{
+				if (const int children = component->ParentChild ? component->ParentChild->Children.size() : component->ParentWindow->Children.size(); 
+					children && (component->Type != ComponentType_Child || children > 1))
+				{
+					for (const auto& child : component->ParentChild ? component->ParentChild->Children : component->ParentWindow->Children)
+					{
+						if (child == component)
+							continue;
+						if (component->Position.x > child->Position.x
+							&& component->Position.x < child->Position.x + child->Size.x 
+							&& component->Position.y > child->Position.y
+							&& component->Position.y < child->Position.y + child->Size.y)
+						{
+							const float pos_x_relative = component->Position.x / 
+								(component->ParentChild ? component->ParentChild->Size.x : component->ParentWindow->WindowSize.x);
+							const float pos_y_relative = component->Position.y / 
+								(component->ParentChild ? component->ParentChild->Size.y : component->ParentWindow->WindowSize.y);
+							if (component->ParentChild)
+								component->ParentChild->PopComponent(component);
+							else
+								component->ParentWindow->PopComponent(component);
+							child->PushComponent(component);
+							component->SetPosition(ImVec2(pos_x_relative * child->Size.x, pos_y_relative * child->Size.y), spacing_x, spacing_y);
+						}
+					}
+				}
+			}
             IS_DRAGGING = false; // Stop dragging
 			PREV_POS = ImVec2(0, 0);
 	        IS_RESIZING = false; //
@@ -258,6 +298,18 @@ namespace EopGuiMaker
 		{
 			if (ImGui::BeginTabItem("Window Properties"))
 			{
+				if (ImGui::BeginCombo("Font", Style.Font.c_str()))
+				{
+					for (const auto& [font_name, font] : FONTS)
+					{
+						const bool is_selected = (Style.Font == font_name);
+						if (ImGui::Selectable(font_name.c_str(), is_selected))
+							Style.Font = font_name;
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
 				for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 				{
 					Style.GetPropertyEditor(i);
@@ -277,6 +329,22 @@ namespace EopGuiMaker
 			if (ImGui::BeginTabItem("Flags"))
 			{
 				GetWindowFlags();
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem("Components"))
+			{
+				if (ImGui::BeginListBox("Components", {300, 400}))
+				{
+					for (const auto& component : m_Components)
+					{
+						if (ImGui::Selectable(component->Label.c_str()))
+						{
+							SelectedComponent = component;
+						}
+					}
+					ImGui::EndListBox();
+				}
 				ImGui::EndTabItem();
 			}
 
@@ -310,10 +378,10 @@ namespace EopGuiMaker
 		
 		std::string code;
 		code += "bool IsWindowOpen = true;\n";
-		code += fmt::format("ImGui::SetNextWindowPos(ImVec2({}, {}));\n", WindowPosition.x, WindowPosition.y);
-		code += fmt::format("ImGui::SetNextWindowSize(ImVec2({}, {}));\n", WindowSize.x, WindowSize.y);
+		code += fmt::format("ImGui::SetNextWindowPos(ImVec2({:.1f}f, {:.1f}f));\n", WindowPosition.x, WindowPosition.y);
+		code += fmt::format("ImGui::SetNextWindowSize(ImVec2({:.1f}f, {:.1f}f));\n", WindowSize.x, WindowSize.y);
 		code += Style.GenerateStylesCode();
-		code += fmt::format("ImGui::Begin(\"{}\", &IsWindowOpen, ImGuiWindowFlags_NoTitleBar);\n", WindowName);
+		code += fmt::format("ImGui::Begin(\"{}\", &IsWindowOpen, {});\n", WindowName, Flags);
 		for (const auto& component : m_Components)
 		{
 			code += component->GenerateCode();
@@ -326,10 +394,10 @@ namespace EopGuiMaker
 	{
 		std::string code;
 		code += "local IsWindowOpen = true\n";
-		code += fmt::format("ImGui.SetNextWindowPos({}, {})\n", WindowPosition.x, WindowPosition.y);
-		code += fmt::format("ImGui.SetNextWindowSize({}, {})\n", WindowSize.x, WindowSize.y);
+		code += fmt::format("ImGui.SetNextWindowPos({:.1f}, {:.1f})\n", WindowPosition.x, WindowPosition.y);
+		code += fmt::format("ImGui.SetNextWindowSize({:.1f}, {:.1f})\n", WindowSize.x, WindowSize.y);
 		code += Style.GenerateStylesLuaCode();
-		code += fmt::format("ImGui.Begin(\"{}\", IsWindowOpen, ImGuiWindowFlags.NoTitleBar)\n", WindowName);
+		code += fmt::format("ImGui.Begin(\"{}\", IsWindowOpen, {})\n", WindowName, Flags);
 		for (const auto& component : m_Components)
 		{
 			code += component->GenerateLuaCode();
@@ -344,7 +412,10 @@ namespace EopGuiMaker
 	{
 		const float spacing_x = WindowSize.x / GridSize.Columns;
 		const float spacing_y = WindowSize.y / GridSize.Rows;
+		if (component->Type == ComponentType_Child)
+			Children.emplace_back(reinterpret_cast<ChildComponent*>(component));
 		m_Components.emplace_back(component);
+		ARRAY_CHANGED = true;
 		component->SetPosition(component->Position, spacing_x, spacing_y);
 		component->SetSize(component->Size, spacing_x, spacing_y);
 		component->ParentWindow = this;
@@ -355,7 +426,15 @@ namespace EopGuiMaker
 	{
 		if (const auto it = std::find(m_Components.begin(), m_Components.end(), component); it != m_Components.end())
 		{
+			if (component->Type == ComponentType_Child)
+			{
+				if (const auto it2 = std::find(Children.begin(), Children.end(), component); it2 != Children.end())
+				{
+					Children.erase(it2);
+				}
+			}
 			m_Components.erase(it);
+			ARRAY_CHANGED = true;
 		}
 	}
 

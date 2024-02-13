@@ -1,127 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="EopGuiMaker">
-      <UniqueIdentifier>{FEDCA243-6A92-1B39-F386-15105F3B123D}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EopGuiMaker\Creator">
-      <UniqueIdentifier>{5DE611E1-C947-EFEE-52B5-35A1BE1526AE}</UniqueIdentifier>
+    <Filter Include="src\EopGuiMaker">
+      <UniqueIdentifier>{95107D5B-019C-EA1F-0AAD-6D1476B74620}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EopGuiMaker\Creator\Components">
-      <UniqueIdentifier>{52F7EB3F-3E1D-B6A6-2763-3B721328DB72}</UniqueIdentifier>
+    <Filter Include="src\EopGuiMaker\Creator">
+      <UniqueIdentifier>{F4C0D5B2-60F8-1D4A-6902-826DD5B84443}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EopGuiMaker\Events">
-      <UniqueIdentifier>{223F1A61-0E23-DBB6-7783-D5096386C538}</UniqueIdentifier>
+    <Filter Include="src\EopGuiMaker\Creator\Components">
+      <UniqueIdentifier>{89A5DFAE-75E1-E218-DEF3-FA0FCA4E8B33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EopGuiMaker\ImGui">
-      <UniqueIdentifier>{A898A8D4-14AF-A66A-5D26-328CC97B77F2}</UniqueIdentifier>
+    <Filter Include="src\EopGuiMaker\Events">
+      <UniqueIdentifier>{D9A2F157-C59C-1AAA-AE09-B1BA9AA28016}</UniqueIdentifier>
     </Filter>
-    <Filter Include="EopGuiMaker\OpenGL">
-      <UniqueIdentifier>{723C0178-5E20-C2CD-C780-BC20B383AC4F}</UniqueIdentifier>
+    <Filter Include="src\EopGuiMaker\ImGui">
+      <UniqueIdentifier>{7FE1B629-EB4D-7224-B441-0A82206D948C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\EopGuiMaker\OpenGL">
+      <UniqueIdentifier>{29A0D86E-159A-01C1-FE06-98D1EA9F672D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor">
+      <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuiFileDialog">
+      <UniqueIdentifier>{6D9D2443-5997-4D95-4204-E4A52E9DB301}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\EopGuiMaker.h" />
+    <ClInclude Include="src\EopGuiMaker.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Application.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Core.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\ButtonComponent.h">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\ChildComponent.h">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Creator\Components\Components.h">
-      <Filter>EopGuiMaker\Creator\Components</Filter>
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EopGuiMaker\Creator\Components\StyleSettings.h">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Creator\UserWindow.h">
-      <Filter>EopGuiMaker\Creator</Filter>
+      <Filter>src\EopGuiMaker\Creator</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\EntryPoint.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Events\ApplicationEvent.h">
-      <Filter>EopGuiMaker\Events</Filter>
+      <Filter>src\EopGuiMaker\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Events\Event.h">
-      <Filter>EopGuiMaker\Events</Filter>
+      <Filter>src\EopGuiMaker\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Events\KeyEvent.h">
-      <Filter>EopGuiMaker\Events</Filter>
+      <Filter>src\EopGuiMaker\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Events\MouseEvent.h">
-      <Filter>EopGuiMaker\Events</Filter>
+      <Filter>src\EopGuiMaker\Events</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\ImGui\ImGuiLayer.h">
-      <Filter>EopGuiMaker\ImGui</Filter>
+      <Filter>src\EopGuiMaker\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EopGuiMaker\ImGui\imgui_stdlib.h">
+      <Filter>src\EopGuiMaker\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EopGuiMaker\ImGui\themeManager.h">
+      <Filter>src\EopGuiMaker\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Layer.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\LayerStack.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Log.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\OpenGL\imgui_impl_glfw.h">
-      <Filter>EopGuiMaker\OpenGL</Filter>
+      <Filter>src\EopGuiMaker\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\OpenGL\imgui_impl_opengl3.h">
-      <Filter>EopGuiMaker\OpenGL</Filter>
+      <Filter>src\EopGuiMaker\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\OpenGL\imgui_impl_opengl3_loader.h">
-      <Filter>EopGuiMaker\OpenGL</Filter>
+      <Filter>src\EopGuiMaker\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\OpenGL\stb_image.h">
-      <Filter>EopGuiMaker\OpenGL</Filter>
+      <Filter>src\EopGuiMaker\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Window.h">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
-    <ClInclude Include="src\gmpch.h" />
-    <ClInclude Include="src\EopGuiMaker\ImGui\themeManager.h" />
-    <ClInclude Include="src\EopGuiMaker\ImGui\toml.hpp" />
-    <ClInclude Include="src\EopGuiMaker\Creator\Components\StyleSettings.h" />
-    <ClInclude Include="src\EopGuiMaker\Creator\Components\ButtonComponent.h" />
-    <ClInclude Include="src\EopGuiMaker\ImGui\imgui_stdlib.h" />
-    <ClInclude Include="src\EopGuiMaker\Creator\Components\ChildComponent.h" />
+    <ClInclude Include="src\gmpch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGuiFileDialog\ImGuiFileDialog.h">
+      <Filter>vendor\ImGuiFileDialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\ButtonComponent.cpp">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\ChildComponent.cpp">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\Components.cpp">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\StyleSettings.cpp">
+      <Filter>src\EopGuiMaker\Creator\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\Creator\UserWindow.cpp">
-      <Filter>EopGuiMaker\Creator</Filter>
+      <Filter>src\EopGuiMaker\Creator</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\ImGui\ImGuiLayer.cpp">
-      <Filter>EopGuiMaker\ImGui</Filter>
+      <Filter>src\EopGuiMaker\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\ImGui\imgui_stdlib.cpp">
+      <Filter>src\EopGuiMaker\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\ImGui\themeManager.cpp">
+      <Filter>src\EopGuiMaker\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\Layer.cpp">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\LayerStack.cpp">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\Log.cpp">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\OpenGL\imgui_impl_glfw.cpp">
-      <Filter>EopGuiMaker\OpenGL</Filter>
+      <Filter>src\EopGuiMaker\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\OpenGL\imgui_impl_opengl3.cpp">
-      <Filter>EopGuiMaker\OpenGL</Filter>
+      <Filter>src\EopGuiMaker\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\Window.cpp">
-      <Filter>EopGuiMaker</Filter>
+      <Filter>src\EopGuiMaker</Filter>
     </ClCompile>
-    <ClCompile Include="src\gmpch.cpp" />
-    <ClCompile Include="src\EopGuiMaker\ImGui\themeManager.cpp" />
-    <ClCompile Include="src\EopGuiMaker\Creator\Components\StyleSettings.cpp" />
-    <ClCompile Include="src\EopGuiMaker\Creator\Components\Components.cpp" />
-    <ClCompile Include="src\EopGuiMaker\Creator\Components\ButtonComponent.cpp" />
-    <ClCompile Include="src\EopGuiMaker\ImGui\imgui_stdlib.cpp" />
-    <ClCompile Include="src\EopGuiMaker\Creator\Components\ChildComponent.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\EopGuiMaker\OpenGL\vertex_shader.glsl" />
-    <None Include="src\EopGuiMaker\OpenGL\fragment_shader.glsl" />
+    <ClCompile Include="src\gmpch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGuiFileDialog\ImGuiFileDialog.cpp">
+      <Filter>vendor\ImGuiFileDialog</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

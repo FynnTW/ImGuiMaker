@@ -60,7 +60,7 @@
       <PrecompiledHeaderFile>gmpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GUIMAKER_PLATFORM_WINDOWS;GUIMAKER_BUILD_DLL;GLFW_INCLUDE_NONE;GUIMAKER_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\EopGuiMaker;src;vendor\spdlog\include;vendor\GLFW\include;vendor\GLAD\include;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\EopGuiMaker;src;vendor\spdlog\include;vendor\GLFW\include;vendor\GLAD\include;vendor\imgui;vendor\ImGuiFileDialog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -83,7 +83,7 @@
       <PrecompiledHeaderFile>gmpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GUIMAKER_PLATFORM_WINDOWS;GUIMAKER_BUILD_DLL;GLFW_INCLUDE_NONE;GUIMAKER_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\EopGuiMaker;src;vendor\spdlog\include;vendor\GLFW\include;vendor\GLAD\include;vendor\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\EopGuiMaker;src;vendor\spdlog\include;vendor\GLFW\include;vendor\GLAD\include;vendor\imgui;vendor\ImGuiFileDialog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -121,7 +121,6 @@
     <ClInclude Include="src\EopGuiMaker\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\EopGuiMaker\ImGui\imgui_stdlib.h" />
     <ClInclude Include="src\EopGuiMaker\ImGui\themeManager.h" />
-    <ClInclude Include="src\EopGuiMaker\ImGui\toml.hpp" />
     <ClInclude Include="src\EopGuiMaker\Layer.h" />
     <ClInclude Include="src\EopGuiMaker\LayerStack.h" />
     <ClInclude Include="src\EopGuiMaker\Log.h" />
@@ -131,6 +130,7 @@
     <ClInclude Include="src\EopGuiMaker\OpenGL\stb_image.h" />
     <ClInclude Include="src\EopGuiMaker\Window.h" />
     <ClInclude Include="src\gmpch.h" />
+    <ClInclude Include="vendor\ImGuiFileDialog\ImGuiFileDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp" />
@@ -151,6 +151,7 @@
     <ClCompile Include="src\gmpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="vendor\ImGuiFileDialog\ImGuiFileDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
@@ -162,10 +163,6 @@
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\EopGuiMaker\OpenGL\fragment_shader.glsl" />
-    <None Include="src\EopGuiMaker\OpenGL\vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

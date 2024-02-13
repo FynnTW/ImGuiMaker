@@ -1,6 +1,9 @@
 #pragma once
 #include "imgui.h"
 
+namespace EopGuiMaker
+{
+	class Component;
 enum FloatStyle
 {
 	FloatStyle_Alpha = 0,
@@ -266,6 +269,9 @@ public:
 	int SetColorsCount = 0;
 	UINT32 EditedStyles = 0;
 	UINT64 EditedColors = 0;
+	std::string Font;
+	bool PushedFont = false;
+
 
 	UINT32 IsFloatStyle = 
 		  1 << ImGuiStyleVar_Alpha
@@ -363,7 +369,7 @@ public:
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
-							code += fmt::format("ImGui::PushStyleVar(ImGuiStyleVar_{}, {}f);\n", style_id_index->second, FloatStyles[float_index]);
+							code += fmt::format("ImGui::PushStyleVar(ImGuiStyleVar_{}, {:.3f}f);\n", style_id_index->second, FloatStyles[float_index]);
 						}
 					}
 				}
@@ -373,7 +379,7 @@ public:
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
-							code += fmt::format("ImGui::PushStyleVar(ImGuiStyleVar_{}, ImVec2({}f, {}f));\n", style_id_index->second, ImVec2Styles[im_vec2_index].x, ImVec2Styles[im_vec2_index].y);
+							code += fmt::format("ImGui::PushStyleVar(ImGuiStyleVar_{}, ImVec2({}f, {:.3f}f));\n", style_id_index->second, ImVec2Styles[im_vec2_index].x, ImVec2Styles[im_vec2_index].y);
 						}
 					}
 				}
@@ -387,7 +393,7 @@ public:
 				{
 					if (const auto color_id_index = COLOR_ID.find(i); color_id_index != COLOR_ID.end())
 					{
-						code += fmt::format("ImGui::PushStyleColor(ImGuiCol_{}, ImVec4({}f, {}f, {}f, {}f));\n", color_id_index->second, Colors[i].x, Colors[i].y, Colors[i].z, Colors[i].w);
+						code += fmt::format("ImGui::PushStyleColor(ImGuiCol_{}, ImVec4({:.3f}f, {:.3f}f, {:.3f}f, {:.3f}f));\n", color_id_index->second, Colors[i].x, Colors[i].y, Colors[i].z, Colors[i].w);
 					}
 				}
 			}
@@ -409,7 +415,7 @@ public:
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
-							code += fmt::format("ImGui.PushStyleVar(ImGuiStyleVar.{}, {})\n", style_id_index->second, FloatStyles[float_index]);
+							code += fmt::format("ImGui.PushStyleVar(ImGuiStyleVar.{}, {:.3f})\n", style_id_index->second, FloatStyles[float_index]);
 						}
 					}
 				}
@@ -419,7 +425,7 @@ public:
 					{
 						if (const auto style_id_index = STYLE_ID.find(i); style_id_index != STYLE_ID.end())
 						{
-							code += fmt::format("ImGui.PushStyleVar(ImGuiStyleVar.{}, {}, {})\n", style_id_index->second, ImVec2Styles[im_vec2_index].x, ImVec2Styles[im_vec2_index].y);
+							code += fmt::format("ImGui.PushStyleVar(ImGuiStyleVar.{}, {:.3f}, {:.3f})\n", style_id_index->second, ImVec2Styles[im_vec2_index].x, ImVec2Styles[im_vec2_index].y);
 						}
 					}
 				}
@@ -433,7 +439,7 @@ public:
 				{
 					if (const auto color_id_index = COLOR_ID.find(i); color_id_index != COLOR_ID.end())
 					{
-						code += fmt::format("ImGui.PushStyleColor(ImGuiCol.{}, {}, {}, {}, {})\n", color_id_index->second, Colors[i].x, Colors[i].y, Colors[i].z, Colors[i].w);
+						code += fmt::format("ImGui.PushStyleColor(ImGuiCol.{}, {:.3f}, {:.3f}, {:.3f}, {:.3f})\n", color_id_index->second, Colors[i].x, Colors[i].y, Colors[i].z, Colors[i].w);
 					}
 				}
 			}
@@ -719,3 +725,5 @@ public:
 	}
 
 };
+}
+

@@ -15,6 +15,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "vendor/GLFW/include"
 IncludeDir["Glad"] = "vendor/GLAD/include"
 IncludeDir["ImGui"] = "vendor/imgui"
+IncludeDir["ImGuiDialog"] = "vendor/ImGuiFileDialog"
 
 include "vendor/GLFW"
 include "vendor/Glad"
@@ -33,7 +34,9 @@ project "EopGuiMaker"
     files
     {
         "src/**.h",
-        "src/**.cpp"
+        "src/**.cpp",
+        "vendor/ImGuiFileDialog/ImGuiFileDialog.cpp",
+        "vendor/ImGuiFileDialog/ImGuiFileDialog.h",
     }
 
     includedirs
@@ -43,7 +46,8 @@ project "EopGuiMaker"
         "vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.ImGuiDialog}",
     }
 
     links
@@ -106,6 +110,7 @@ project "GuiMaker"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
+        "%{IncludeDir.ImGuiDialog}",
     }
 
     links 

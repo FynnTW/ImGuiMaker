@@ -13,6 +13,7 @@ namespace EopGuiMaker
 			Position = {0,0};
 			Label = label;
 			Text = text;
+			TempLabel = label;
 
 			ActiveStyles  = 
 			1 << ImGuiStyleVar_ButtonTextAlign

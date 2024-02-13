@@ -10,6 +10,7 @@ namespace EopGuiMaker
 {
 	class ChildComponent;
 	class UserWindow;
+	class StyleSettings;
 #define FLOAT_NOT_EQUAL(a, b) (abs((a)-(b)) < 0.0001)
 #define COLOR_IS_EQUAL(a, b) ((a).x == (b).x && (a).y == (b).y && (a).z == (b).z && (a).w == (b).w)
 #define IMVEC2_IS_EQUAL(a, b) ((a).x == (b).x && (a).y == (b).y)
@@ -51,7 +52,10 @@ namespace EopGuiMaker
 		void DrawResetButtons();
 		void DrawProperties();
 		void SetStyles();
+		void SetFont();
+		void PopFont() const;
 		std::string Label;
+		std::string TempLabel;
 		void PopStyles() const;
 		ImVec2 ScreenSpacePos;
 		ImVec2 ScreenSpacePosMax;
@@ -72,12 +76,16 @@ namespace EopGuiMaker
 		{
 			Size = size;
 			Label = label;
+			TempLabel = label;
 			Position = position;
 			ActiveStyles = UINT32_MAX;
 			ActiveColors = UINT64_MAX;
-			Styles.Colors[ImGuiCol_ChildBg] = { 255.0f, 255.0f,255.0f, 150.0f };
+			Styles.Colors[ImGuiCol_ChildBg] = { 1.0f,  1.0f, 1.0f, 0.04f };
 			Styles.EditedColors |= 1 << ImGuiCol_ChildBg;
+			Styles.Colors[ImGuiCol_Border] = { 0.8627451f, 0.13533255f, 0.13533255f, 1.0f };
+			Styles.EditedColors |= 1 << ImGuiCol_Border;
 			Type = ComponentType_Child;
+			Flags |= ImGuiChildFlags_Border;
 
 		}
 		~ChildComponent();
@@ -87,11 +95,13 @@ namespace EopGuiMaker
 		std::string GenerateCode() override;
 		std::string GenerateLuaCode() override;
 		void Draw() override;
+		bool ShowEditorBorder = true;
+		bool ShowEditorBackground = true;
 		void PushComponent(Component* component);
 		void PopComponent(const Component* component);
 		std::vector<ChildComponent*> Children;
 		
-		int WindowFlags;
+		int WindowFlags = 0;
 		void GetChildFlags();
 
 	private:
@@ -99,6 +109,21 @@ namespace EopGuiMaker
 			
 	};
 
+	bool UpdateLabel(const std::string& old_label, const std::string& new_label);
 
+	struct AddFont
+	{
+		std::string FontName;
+		std::string FontPath;
+		float FontSize;
+	};
+
+	inline std::vector<AddFont*> FONT_QUEUE {
+
+	};
+
+	inline std::unordered_map<std::string, ImFont*> FONTS {
+
+	};
 
 }

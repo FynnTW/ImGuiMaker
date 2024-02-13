@@ -6,6 +6,7 @@ namespace EopGuiMaker
 {
 	class Component;
 	class ChildComponent;
+	class StyleSettings;
 
 	class GUIMAKER_API UserWindow
 	{
@@ -23,6 +24,8 @@ namespace EopGuiMaker
 		ImVec2 GetSpacing() const;
 		void OpenWindow();
 		void DrawWindow();
+		void SetFont();
+		void PopFont() const;
 		void GetWindowFlags();
 		std::string WindowName = "New Window";
 		ImVec2 WindowSize = { 1280.0f, 720.0f };

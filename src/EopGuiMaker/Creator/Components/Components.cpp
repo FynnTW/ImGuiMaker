@@ -5,35 +5,54 @@
 
 namespace EopGuiMaker
 {
-	void Component::SetPosition(const ImVec2 position, const float grid_spacing_x, const float grid_spacing_y)
+	void Component::SetPosition(ImVec2 position, const float grid_spacing_x, const float grid_spacing_y)
 	{
-		Position = position;
+		const ImVec2 parent_size = ParentChild ? ParentChild->Size : ParentWindow->WindowSize;
+		if (position.x < 0.0f)
+			position.x = 0.0f;
+		if (position.y < 0.0f)
+			position.y = 0.0f;
+		if (position.x > parent_size.x - Size.x)
+			position.x = parent_size.x - Size.x;
+		if (position.y > parent_size.y - Size.y)
+			position.y = parent_size.y - Size.y;
+
 		if (IsSnappedPos)
 		{
-			if (const float mod_x = fmod(Position.x, grid_spacing_x); mod_x > 0.5f)
-				Position.x += grid_spacing_x - mod_x;
+			if (const float mod_x = fmod(position.x, grid_spacing_x); mod_x > 0.5f)
+				position.x += grid_spacing_x - mod_x;
 			else
 				Size.x -= mod_x;
-			if (const float mod_y = fmod(Position.y, grid_spacing_y); mod_y > 0.5f)
-				Position.y += grid_spacing_y - mod_y;
+			if (const float mod_y = fmod(position.y, grid_spacing_y); mod_y > 0.5f)
+				position.y += grid_spacing_y - mod_y;
 			else
-				Position.y -= mod_y;
+				position.y -= mod_y;
 		}
+		Position = position;
 	}
-	void Component::SetSize(const ImVec2 size, const float grid_spacing_x, const float grid_spacing_y)
+	void Component::SetSize(ImVec2 size, const float grid_spacing_x, const float grid_spacing_y)
 	{
-		Size = size;
+		const ImVec2 parent_size = ParentChild ? ParentChild->Size : ParentWindow->WindowSize;
+		if (size.x < 0.0f)
+			size.x = 1.0f;
+		if (size.y < 0.0f)
+			size.y = 1.0f;
+		if (size.x > parent_size.x - Position.x)
+			size.x = parent_size.x - Position.x;
+		if (size.y > parent_size.y - Position.y)
+			size.y = parent_size.y - Position.y;
 		if (IsSnappedSize)
 		{
-			if (const float mod_x = fmod(Size.x, grid_spacing_x); mod_x > 0.5f)
-				Size.x += grid_spacing_x - mod_x;
+			if (const float mod_x = fmod(size.x, grid_spacing_x); mod_x > 0.5f)
+				size.x += grid_spacing_x - mod_x;
 			else
-				Size.x -= mod_x;
-			if (const float mod_y = fmod(Size.y, grid_spacing_y); mod_y > 0.5f)
-				Size.y += grid_spacing_y - mod_y;
+				size.x -= mod_x;
+			if (const float mod_y = fmod(size.y, grid_spacing_y); mod_y > 0.5f)
+				size.y += grid_spacing_y - mod_y;
 			else
-				Size.y -= mod_y;
+				size.y -= mod_y;
 		}
+		Size = size;
 	}
 	void Component::DrawCopyButtons()
 	{
@@ -57,6 +76,7 @@ namespace EopGuiMaker
 
 	void Component::SetStyles()
 	{
+		SetFont();
 		Styles.SetStylesCount = 0;
 		Styles.SetColorsCount = 0;
 
@@ -73,6 +93,7 @@ namespace EopGuiMaker
 	{
 		Styles.PopStyles();
 		Styles.PopColors();
+		PopFont();
 	}
 	
 	void Component::DrawResetButtons()
@@ -82,12 +103,58 @@ namespace EopGuiMaker
 		ImGui::SameLine();
 		if (ImGui::Button("Reset Colors"))
 			Styles.ResetColors();
-		ImGui::InputText("Label", &Label);
+		ImGui::InputFloat2("Size", &Size.x);
+		ImGui::InputFloat2("Position", &Position.x);
+		if (ImGui::InputText("Label", &TempLabel))
+		{
+			if (IsLabelValid(TempLabel))
+			{
+				if (UpdateLabel(Label, TempLabel))
+					Label = TempLabel;
+			}
+		}
 		DrawParentsBox();
+	}
+
+	// Function to update the key/label
+	bool UpdateLabel(const std::string& old_label, const std::string& new_label) {
+	    // Step 1: Find the old element
+	    auto it = ITEMS.find(old_label);
+	    if (it == ITEMS.end()) {
+			GUIMAKER_CORE_TRACE("Label doesn't Exist");
+	        return false; // Update failed
+	    }
+
+	    // Step 2: Insert a new element with the new key and move the value
+	    // Check if the new label already exists to avoid overwriting
+	    if (ITEMS.find(new_label) == ITEMS.end()) {
+	        // Move the Component pointer to the new key
+	        ITEMS[new_label] = it->second;
+	    } else {
+			GUIMAKER_CORE_WARN("Label already exists");
+	        return false;
+	    }
+
+	    // Step 3: Erase the old element
+	    ITEMS.erase(it);
+
+	    return true; // Update succeeded
 	}
 	
 	void Component::DrawProperties()
 	{
+		if (ImGui::BeginCombo("Font", Styles.Font.c_str()))
+		{
+			for (const auto& [font_name, font] : FONTS)
+			{
+				const bool is_selected = (Styles.Font == font_name);
+				if (ImGui::Selectable(font_name.c_str(), is_selected))
+					Styles.Font = font_name;
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
 		for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 		{
 			if (1 << i & ActiveStyles)
@@ -100,6 +167,32 @@ namespace EopGuiMaker
 		}
 	}
 
+	void Component::SetFont()
+	{
+		Styles.PushedFont = false;
+		if (!Styles.Font.empty())
+		{
+			if (FONTS.find(Styles.Font) == FONTS.end()) {
+				return;
+			}
+			ImGui::PushFont(FONTS[Styles.Font]);
+			Styles.PushedFont = true;
+		}
+	}
+
+	void Component::PopFont() const
+	{
+		if (Styles.PushedFont)
+		{
+			ImGui::PopFont();
+		}
+	}
+
+	void DrawDebugTab()
+	{
+		ImGui::Text("Debug");
+	}
+
 	void Component::DrawParentsBox()
 	{
 		if (ParentChild)
@@ -109,22 +202,40 @@ namespace EopGuiMaker
 			{
 				ParentChild->PopComponent(this);
 				ParentWindow->PushComponent(this);
+				this->ParentChild = nullptr;
 			}
 		}
 		else
 		{
 			ImGui::Text("Parent: Main Window");
 		}
-		if (!ParentWindow->Children.empty())
+		if (const int children = ParentChild ? ParentChild->Children.size() : ParentWindow->Children.size(); 
+					children && (this->Type != ComponentType_Child || children > 1))
 		{
-			if (ImGui::BeginListBox("Children"))
+			if (ImGui::BeginListBox("Children", {100.0f, 50.f}))
 			{
-				for (const auto& child : ParentWindow->Children)
+				for (const auto& child : ParentChild ? ParentChild->Children : ParentWindow->Children)
 				{
+					if (child == this)
+						continue;
+					if (child == ParentChild)
+						continue;
 					if (ImGui::Selectable(child->Label.c_str()))
 					{
-						ParentWindow->PopComponent(this);
+						const ImVec2 old_size = ParentChild ? ParentChild->Size : ParentWindow->WindowSize;
+						const float pos_x_relative = Position.x / old_size.x;
+						const float pos_y_relative = Position.y / old_size.y;
+						const ImVec2 spacing = ParentWindow->GetSpacing();
+						if (ParentChild)
+						{
+							ParentChild->PopComponent(this);
+						}
+						else
+						{
+							ParentWindow->PopComponent(this);
+						}
 						child->PushComponent(this);
+						SetPosition(ImVec2(pos_x_relative * child->Size.x, pos_y_relative * child->Size.y), spacing.x, spacing.y);
 					}
 				}
 				ImGui::EndListBox();

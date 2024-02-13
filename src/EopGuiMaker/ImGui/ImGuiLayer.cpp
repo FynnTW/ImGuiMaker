@@ -1,7 +1,10 @@
 #include "gmpch.h"
 #include "ImGuiLayer.h"
 
+#include <filesystem>
+
 #include "Application.h"
+#include <windows.h>
 #include "imgui.h"
 #include "Creator/Components/ButtonComponent.h"
 #include "Creator/Components/ChildComponent.h"
@@ -10,10 +13,14 @@
 #include "OpenGL/imgui_impl_glfw.h"
 #include "OpenGL/imgui_impl_opengl3.h"
 #include "ImGui/imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 
 namespace EopGuiMaker
 {
 #define BIND_EVENT_FN(x) [this](auto& event) {return x(event);}
+
+	ImFontAtlas* ATLAS;
+
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
@@ -22,11 +29,68 @@ namespace EopGuiMaker
 
 	ImGuiLayer::~ImGuiLayer()
 	= default;
+
+	bool ADD_FONT_WINDOW = false;
+	void FontManager()
+	{
+		ImGui::Begin("Font Manager");
+		static std::string font_name = "Font";
+		static float font_size = 16.0f;
+		if (ADD_FONT_WINDOW)
+		{
+			ImGui::InputText("Font Name", &font_name);
+			ImGui::InputFloat("Font Size", &font_size);
+			if (ImGui::Button("Browse"))
+			{
+				IGFD::FileDialogConfig config;
+				config.path = ".";
+				ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".ttf", config);
+			}
+			// display
+			if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
+			{
+			    if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
+				    const std::string file_path_name = ImGuiFileDialog::Instance()->GetFilePathName();
+				    const std::string file_path = ImGuiFileDialog::Instance()->GetCurrentPath();
+				    const auto add_font = new AddFont();
+					add_font->FontName = font_name;
+					add_font->FontPath = file_path_name;
+					add_font->FontSize = font_size;
+					FONT_QUEUE.push_back(add_font);
+			    }
+			    ADD_FONT_WINDOW = false;
+			    // close
+			    ImGuiFileDialog::Instance()->Close();
+			}
+		}
+		else
+		{
+			if (ImGui::Button("Add Font"))
+			{
+				ADD_FONT_WINDOW = true;
+			}
+			if (ImGui::BeginListBox("Fonts"))
+			{
+				for (auto& [font_name, font] : FONTS)
+				{
+					if (ImGui::Selectable(font_name.c_str()))
+					{
+						//
+					}
+				}
+				ImGui::EndListBox();
+			}
+		}
+		ImGui::End();
+	}
 	
-	static bool openNewWindowPopup = false;
-	static bool windowSettingsPopup = false;
-	static bool openCodeWindow = false;
-	std::string code = "";
+	static bool OPEN_NEW_WINDOW_POPUP = false;
+	static bool WINDOW_SETTINGS_POPUP = false;
+	static bool OPEN_CODE_WINDOW = false;
+	std::string CODE;
+	ImFont* DEFAULT_FONT;
+	std::string DEFAULT_FONT_NAME = "Georgia_Bold";
+
 
 	void ImGuiLayer::OnUpdate()
 	{
@@ -52,11 +116,33 @@ namespace EopGuiMaker
 
 			}
 		}
-
+		
+		for (const auto& font : FONT_QUEUE) {
+			if (FONTS.find(font->FontName) != FONTS.end()) {
+				continue;
+			}
+			GUIMAKER_CORE_INFO(font->FontPath.c_str());
+			const auto new_font = ImGui::GetIO().Fonts->AddFontFromFileTTF(font->FontPath.c_str(), font->FontSize);
+			FONTS[font->FontName] = new_font;
+		}
+		FONT_QUEUE.clear();
+		if (!ImGui::GetIO().Fonts->IsBuilt())
+		{
+			ImGui::GetIO().Fonts->Build();
+			ImGui_ImplOpenGL3_DestroyFontsTexture();
+			ImGui_ImplOpenGL3_CreateFontsTexture();
+			if(!DEFAULT_FONT)
+			{
+				if (FONTS.find(DEFAULT_FONT_NAME) != FONTS.end()) {
+					DEFAULT_FONT = FONTS[DEFAULT_FONT_NAME];
+				}
+			}
+		}
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		
+		if (DEFAULT_FONT)
+			ImGui::PushFont(DEFAULT_FONT);
 		// Create a full-width menu bar
 		if (ImGui::BeginMainMenuBar()) {
 		    if (ImGui::BeginMenu("File")) {
@@ -70,7 +156,7 @@ namespace EopGuiMaker
 		    if (ImGui::BeginMenu("Window Parameters")) 
 			{
 		        if (ImGui::MenuItem("Parameters")) {
-		    		openNewWindowPopup = true;
+		    		OPEN_NEW_WINDOW_POPUP = true;
 		        }
 		    	ImGui::EndMenu();
 			}
@@ -80,7 +166,7 @@ namespace EopGuiMaker
 		    		ThisWindow->SnapComponents();
 		        }
 		        if (ImGui::MenuItem("Grid settings")) {
-		    		windowSettingsPopup = true;
+		    		WINDOW_SETTINGS_POPUP = true;
 		        }
 		    	ImGui::EndMenu();
 			}
@@ -123,52 +209,63 @@ namespace EopGuiMaker
 		    if (ImGui::BeginMenu("Generate Code")) 
 			{
 		        if (ImGui::MenuItem("C++")) {
-		            code = ThisWindow->GetOutPutCode();
-					openCodeWindow = true;
+		            CODE = ThisWindow->GetOutPutCode();
+					OPEN_CODE_WINDOW = true;
 		        }
 		        if (ImGui::MenuItem("Lua")) {
-		            code = ThisWindow->GetOutPutCodeLua();
-					openCodeWindow = true;
+		            CODE = ThisWindow->GetOutPutCodeLua();
+					OPEN_CODE_WINDOW = true;
 		        }
+				ImGui::EndMenu();
+			}
+		    if (ImGui::BeginMenu("Font Manager")) 
+			{
+				FontManager();
+				ImGui::EndMenu();
+			}
+		    if (ImGui::BeginMenu("Debug")) 
+			{
+				bool debug = true;
+		    	ImGui::ShowDebugLogWindow(&debug);
 				ImGui::EndMenu();
 			}
 		}
 	    ImGui::EndMainMenuBar();
 
-		if (openNewWindowPopup) {
-			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		if (OPEN_NEW_WINDOW_POPUP) {
+			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 			ImGui::SetNextWindowPos(center);
 			ImGui::OpenPopup("Set Window Parameters");
 			// Always center this window when appearing
-			openNewWindowPopup = false; // Reset the flag
+			OPEN_NEW_WINDOW_POPUP = false; // Reset the flag
 		}
 
-		if (openCodeWindow) {
-			ImGui::Begin("Code", &openCodeWindow);
-			ImGui::TextWrapped(code.c_str());
+		if (OPEN_CODE_WINDOW) {
+			ImGui::Begin("Code", &OPEN_CODE_WINDOW);
+			ImGui::TextWrapped(CODE.c_str());
 			if (ImGui::Button("Copy"))
-				ImGui::SetClipboardText(code.c_str());
+				ImGui::SetClipboardText(CODE.c_str());
 			ImGui::SameLine();
 			if (ImGui::Button("Close"))
-				openCodeWindow = false;
+				OPEN_CODE_WINDOW = false;
 			ImGui::End();
 		}
 
-		if (windowSettingsPopup) {
-			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		if (WINDOW_SETTINGS_POPUP) {
+			const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 			ImGui::SetNextWindowPos(center);
 			ImGui::OpenPopup("Window Settings");
-			windowSettingsPopup = false; // Reset the flag
+			WINDOW_SETTINGS_POPUP = false; // Reset the flag
 		}
 
 
-		if (ImGui::BeginPopupModal("Set Window Parameters", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal("Set Window Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		    ImGui::InputText("Window Name", &ThisWindow->WindowName);
 		    ImGui::InputFloat2("Window Size", &ThisWindow->WindowSize.x);
 		    
 		    if (ImGui::Button("Set")) {
 		        ImGui::CloseCurrentPopup(); // Close the popup when done
-				ThisWindow->SetWindowSize(ThisWindow->WindowSize); // Set the flag to show the new window
+				ThisWindow->OpenWindow(); // Set the flag to show the new window
 		    }
 		    ImGui::SameLine();
 		    if (ImGui::Button("Cancel")) {
@@ -178,7 +275,7 @@ namespace EopGuiMaker
 		    ImGui::EndPopup();
 		}
 
-		if (ImGui::BeginPopupModal("Window Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::BeginPopupModal("Window Settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 
 		    ImGui::Checkbox("Enable Grid", &ThisWindow->EnableGrid);
 		    ImGui::InputInt2("Grid Size", &ThisWindow->GridSize.Columns);
@@ -197,7 +294,8 @@ namespace EopGuiMaker
 		}
 
 		if (ThisWindow->SelectedComponent != nullptr) {
-			ImGui::Begin("Properties");
+			const std::string name = ThisWindow->SelectedComponent->Label + " Properties";
+			ImGui::Begin(name.c_str());
 			ThisWindow->SelectedComponent->PropertiesWindow();
 			if (ImGui::Button("Delete")) {
 				ThisWindow->PopComponent(ThisWindow->SelectedComponent);
@@ -211,6 +309,8 @@ namespace EopGuiMaker
 			ImGui::End();
 		}
 		ItemListBox();
+		if (DEFAULT_FONT)
+			ImGui::PopFont();
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		/**
@@ -229,7 +329,7 @@ namespace EopGuiMaker
 	bool CHILD_INC = false;
 	void ImGuiLayer::ItemListBox()
 	{
-		if (bool item_box = ImGui::BeginListBox("Items", ImVec2(320, 200))) {
+		if (ImGui::BeginListBox("Items", ImVec2(320, 200))) {
 			if (ImGui::Selectable("Button"))
 			{
 				BUTTON_SELECTED = true;
@@ -245,7 +345,10 @@ namespace EopGuiMaker
 				{
 					static std::string name = "Button_";
 					if (!BUTTON_INC)
+					{
+						name = name.substr(0, name.find('_') + 1);
 						name += std::to_string(AddCount[ComponentType_Button]);
+					}
 					BUTTON_INC = true;
 					ImGui::InputText("Label", &name);
 
@@ -254,7 +357,7 @@ namespace EopGuiMaker
 
 					static auto size = ImVec2(100, 50);
 					ImGui::InputFloat2("Size", &size.x);
-					if (ImGui::Button("Create"))
+					if (ImGui::Button("Create") && IsLabelValid(name))
 					{
 						CreateButtonWindow(name, size, text);
 						ImGui::CloseCurrentPopup();
@@ -277,12 +380,15 @@ namespace EopGuiMaker
 				{
 					static std::string name = "Child_";
 					if (!CHILD_INC)
+					{
+						name = name.substr(0, name.find('_') + 1);
 						name += std::to_string(AddCount[ComponentType_Child]);
+					}
 					CHILD_INC = true;
-					static auto size = ImVec2(100, 50);
+					static auto size = ImVec2(400, 200);
 					ImGui::InputText("Label", &name);
 					ImGui::InputFloat2("Size", &size.x);
-					if (ImGui::Button("Create"))
+					if (ImGui::Button("Create") && IsLabelValid(name))
 					{
 						CreateChildWindow(name, size);
 						ImGui::CloseCurrentPopup();
@@ -302,7 +408,8 @@ namespace EopGuiMaker
 		}
 	}
 
-	bool ImGuiLayer::IsLabelValid(const std::string& label)
+
+	bool IsLabelValid(const std::string& label)
 	{
 		if (label.empty())
 		{
@@ -320,16 +427,17 @@ namespace EopGuiMaker
 	{
 		GUIMAKER_CORE_INFO("Added Child");
 		auto* new_child = new ChildComponent(name.c_str(), size, ImVec2(0, 0));
+		new_child->ParentWindow = ThisWindow;
 		ITEMS.insert(std::make_pair(name, new_child));
 		AddCount[ComponentType_Child]++;
 		ThisWindow->PushComponent(new_child);
-		ThisWindow->Children.push_back(new_child);
 	}
 
 	void ImGuiLayer::CreateButtonWindow(const std::string& name, const ImVec2 size, const std::string& text)
 	{
 		GUIMAKER_CORE_INFO("Added Button");
 		auto* new_button = new ButtonComponent(name, size, text);
+		new_button->ParentWindow = ThisWindow;
 		AddCount[ComponentType_Button]++;
 		ITEMS.insert(std::make_pair(name, new_button));
 		ThisWindow->PushComponent(new_button);
@@ -337,6 +445,7 @@ namespace EopGuiMaker
 
 	void ImGuiLayer::OnAttach() {
 		Context = ImGui::CreateContext();
+
 		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
@@ -347,7 +456,43 @@ namespace EopGuiMaker
 
 		ImGui_ImplOpenGL3_Init("#version 410");
 		ImGui_ImplGlfw_InitForOpenGL(app.GetWindow().GetNativeWindow(), true);
-		ThisWindow->OpenWindow();
+		for (const auto& dir_entry : std::filesystem::recursive_directory_iterator(R"(D:\data\Projects\EopGuiMaker\Resources\Fonts)"))
+		{
+			auto new_font = new AddFont();
+			std::string file_name = dir_entry.path().filename().string();
+			const std::string file_clean = file_name.substr(0, file_name.find_last_of('.'));
+			new_font->FontName = file_clean;
+			new_font->FontPath = dir_entry.path().string();
+			new_font->FontSize = 16.0f;
+			FONT_QUEUE.push_back(new_font);
+			GUIMAKER_CORE_INFO(dir_entry.path().string());
+		}
+		for (const auto& dir_entry : std::filesystem::recursive_directory_iterator(R"(C:\Windows\Fonts)"))
+		{
+			std::string file_name = dir_entry.path().filename().string();
+			const std::size_t ttf_type = std::string(file_name).find(".ttf");
+			const std::size_t marlett = std::string(file_name).find("marlett");
+			const std::size_t symbolttf = std::string(file_name).find("symbol.ttf");
+			const std::size_t webdings = std::string(file_name).find("webdings");
+			const std::size_t wingding = std::string(file_name).find("wingding");
+			if (ttf_type == std::string::npos
+				|| marlett != std::string::npos
+				|| webdings != std::string::npos
+				|| wingding != std::string::npos
+				|| symbolttf != std::string::npos
+				)
+			{
+				continue;
+			}
+			auto new_font = new AddFont();
+			const std::string file_clean = file_name.substr(0, file_name.find_last_of('.'));
+			new_font->FontName = file_clean;
+			new_font->FontPath = dir_entry.path().string();
+			new_font->FontSize = 16.0f;
+			FONT_QUEUE.push_back(new_font);
+			GUIMAKER_CORE_INFO(dir_entry.path().string());
+		}
+		OPEN_NEW_WINDOW_POPUP = true;
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -357,8 +502,8 @@ namespace EopGuiMaker
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
-		EventDispatcher eventDispatcher(event);
-		eventDispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonPressed));
+		EventDispatcher event_dispatcher(event);
+		event_dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonPressed));
 	}
 
 	bool ImGuiLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
