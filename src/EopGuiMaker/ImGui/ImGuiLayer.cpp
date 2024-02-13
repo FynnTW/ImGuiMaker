@@ -416,9 +416,13 @@ namespace EopGuiMaker
 			GUIMAKER_CORE_ERROR("Label is empty");
 			return false;
 		}
-		if (const auto match = ITEMS.find(label); match != ITEMS.end())
+		for (const auto& [key, item] : ITEMS)
 		{
-			return false;
+			if (item->Label == label)
+			{
+				GUIMAKER_CORE_ERROR("Label already exists");
+				return false;
+			}
 		}
 		return true;
 	}

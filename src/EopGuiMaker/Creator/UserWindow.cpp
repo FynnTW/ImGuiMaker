@@ -240,8 +240,18 @@ namespace EopGuiMaker
 			GUIMAKER_APP_INFO("Component Dragged {0}, {1}, {2}, {3}, {4}, {5}", SelectedComponent->Position.x,  SelectedComponent->Position.y, mouse_pos.x, mouse_pos.y, PREV_POS.x, PREV_POS.y);
 		}
         if (!ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
-			if (IS_DRAGGING)
+			if (IS_DRAGGING && SelectedComponent == component)
 			{
+				if (IS_RESIZING && SelectedComponent->Type == ComponentType_Child)
+				{
+					const auto child = dynamic_cast<ChildComponent*>(SelectedComponent);
+					for (auto it = child->m_Components.end(); it != child->m_Components.begin(); )
+					{
+						const auto comp = *--it;
+						comp->SetPosition(comp->Size, spacing_x, spacing_y);
+						comp->SetSize(comp->Size, spacing_x, spacing_y);
+					}
+				}
 				if (const int children = component->ParentChild ? component->ParentChild->Children.size() : component->ParentWindow->Children.size(); 
 					children && (component->Type != ComponentType_Child || children > 1))
 				{
@@ -264,13 +274,14 @@ namespace EopGuiMaker
 								component->ParentWindow->PopComponent(component);
 							child->PushComponent(component);
 							component->SetPosition(ImVec2(pos_x_relative * child->Size.x, pos_y_relative * child->Size.y), spacing_x, spacing_y);
+							component->SetSize(component->Size, spacing_x, spacing_y);
 						}
 					}
 				}
+	            IS_DRAGGING = false; // Stop dragging
+				PREV_POS = ImVec2(0, 0);
+		        IS_RESIZING = false; //
 			}
-            IS_DRAGGING = false; // Stop dragging
-			PREV_POS = ImVec2(0, 0);
-	        IS_RESIZING = false; //
         }
 		if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
 		{
@@ -281,6 +292,8 @@ namespace EopGuiMaker
 
 	void UserWindow::SetStyles()
 	{
+		if (Style.FontScale != 1.0f)
+			ImGui::SetWindowFontScale(Style.FontScale);
 		Style.SetStylesCount = 0;
 		Style.SetColorsCount = 0;
 
@@ -310,6 +323,7 @@ namespace EopGuiMaker
 					}
 					ImGui::EndCombo();
 				}
+				ImGui::SliderFloat("Font Scale", &Style.FontScale, 0.5f,3.0f);
 				for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 				{
 					Style.GetPropertyEditor(i);
@@ -371,6 +385,7 @@ namespace EopGuiMaker
 	{
 		Style.PopStyles();
 		Style.PopColors();
+		ImGui::SetWindowFontScale(1.0f);
 	}
 
 	std::string UserWindow::GetOutPutCode()

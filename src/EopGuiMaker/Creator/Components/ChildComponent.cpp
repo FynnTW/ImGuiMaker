@@ -26,6 +26,7 @@ namespace EopGuiMaker
 					}
 					ImGui::EndCombo();
 				}
+				ImGui::SliderFloat("Font Scale", &Styles.FontScale, 0.5f,3.0f);
 				DrawSnapOptions();
 				for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 				{
@@ -200,7 +201,6 @@ namespace EopGuiMaker
 
 		component->ParentChild = this;
 		const auto spacing = ParentWindow->GetSpacing();
-		component->SetSize(component->Size, spacing.x, spacing.y);
 		ParentWindow->SelectedComponent = component;
 	}
 
@@ -222,7 +222,6 @@ namespace EopGuiMaker
 	void ChildComponent::Draw()
 	{
 		SetStyles();
-		SetFont();
 		ImGui::SetCursorPos(Position);
 		ImGui::BeginChild(Label.c_str(), Size, Flags, WindowFlags);
 		ARRAY_CHANGED_CHILD = false;
@@ -239,6 +238,5 @@ namespace EopGuiMaker
 		}
 		ImGui::EndChild();
 		PopStyles();
-		PopFont();
 	}
 }

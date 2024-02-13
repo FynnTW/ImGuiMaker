@@ -103,11 +103,13 @@ namespace EopGuiMaker
 		
 		int WindowFlags = 0;
 		void GetChildFlags();
+		std::vector<Component*> m_Components;
 
 	private:
-		std::vector<Component*> m_Components;
 			
 	};
+
+	inline int COPY_COUNT = 0;
 
 	bool UpdateLabel(const std::string& old_label, const std::string& new_label);
 

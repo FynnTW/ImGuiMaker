@@ -270,6 +270,7 @@ public:
 	UINT32 EditedStyles = 0;
 	UINT64 EditedColors = 0;
 	std::string Font;
+	float FontScale = 1.0f;
 	bool PushedFont = false;
 
 
@@ -322,6 +323,9 @@ public:
 		memcpy(Colors, other.Colors, sizeof(Colors));
 		SetStylesCount = other.SetStylesCount;
 		SetColorsCount = other.SetColorsCount;
+		EditedColors = other.EditedColors;
+		EditedStyles = other.EditedStyles;
+		Font = other.Font;
 	}
 
 	void SetFloatStyle(const int style)

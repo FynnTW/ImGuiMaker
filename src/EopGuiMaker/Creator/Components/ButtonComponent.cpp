@@ -17,13 +17,16 @@ namespace EopGuiMaker
 
 	ButtonComponent* ButtonComponent::Clone()
 	{
-		auto* clone = new ButtonComponent(Label, Size, Text);
+		auto* clone = new ButtonComponent(Label + "_copy" + std::to_string(COPY_COUNT), Size, Text);
 		clone->IsSnappedPos = IsSnappedPos;
 		clone->IsSnappedSize = IsSnappedSize;
-		clone->Styles = StyleSettings(Styles);
+		clone->Styles = *new StyleSettings(Styles);
 		clone->Size = Size;
+		clone->ParentWindow = ParentWindow;
+		clone->ParentChild = ParentChild;
 		clone->Position.x = Position.x;
 		clone->Position.y = Position.y + Size.y + 1.0f;
+		COPY_COUNT++;
 		return clone;
 	}
 

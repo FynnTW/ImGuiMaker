@@ -74,8 +74,11 @@ namespace EopGuiMaker
 		ImGui::Checkbox("Is Position Snapped", &IsSnappedPos);
 	}
 
+
 	void Component::SetStyles()
 	{
+		if (Styles.FontScale != 1.0f)
+			ImGui::SetWindowFontScale(Styles.FontScale);
 		SetFont();
 		Styles.SetStylesCount = 0;
 		Styles.SetColorsCount = 0;
@@ -94,6 +97,7 @@ namespace EopGuiMaker
 		Styles.PopStyles();
 		Styles.PopColors();
 		PopFont();
+		ImGui::SetWindowFontScale(ParentChild ? ParentChild->Styles.FontScale : ParentWindow->Style.FontScale);
 	}
 	
 	void Component::DrawResetButtons()
@@ -107,12 +111,17 @@ namespace EopGuiMaker
 		ImGui::InputFloat2("Position", &Position.x);
 		if (ImGui::InputText("Label", &TempLabel))
 		{
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Set Label"))
+		{
 			if (IsLabelValid(TempLabel))
 			{
-				if (UpdateLabel(Label, TempLabel))
-					Label = TempLabel;
+				UpdateLabel(Label, TempLabel);
+				Label = TempLabel;
 			}
 		}
+
 		DrawParentsBox();
 	}
 
@@ -155,6 +164,7 @@ namespace EopGuiMaker
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::SliderFloat("Font Scale", &Styles.FontScale, 0.5f,3.0f);
 		for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 		{
 			if (1 << i & ActiveStyles)
