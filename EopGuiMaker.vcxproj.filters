@@ -39,20 +39,11 @@
     <ClInclude Include="src\EopGuiMaker\Core.h">
       <Filter>src\EopGuiMaker</Filter>
     </ClInclude>
-    <ClInclude Include="src\EopGuiMaker\Creator\Components\ButtonComponent.h">
-      <Filter>src\EopGuiMaker\Creator\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EopGuiMaker\Creator\Components\ChildComponent.h">
-      <Filter>src\EopGuiMaker\Creator\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Creator\Components\Components.h">
       <Filter>src\EopGuiMaker\Creator\Components</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\Creator\Components\StyleSettings.h">
       <Filter>src\EopGuiMaker\Creator\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EopGuiMaker\Creator\UserWindow.h">
-      <Filter>src\EopGuiMaker\Creator</Filter>
     </ClInclude>
     <ClInclude Include="src\EopGuiMaker\EntryPoint.h">
       <Filter>src\EopGuiMaker</Filter>
@@ -108,6 +99,7 @@
     <ClInclude Include="vendor\ImGuiFileDialog\ImGuiFileDialog.h">
       <Filter>vendor\ImGuiFileDialog</Filter>
     </ClInclude>
+    <ClInclude Include="src\EopGuiMaker\ImGui\ImGuiHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EopGuiMaker\Application.cpp">
@@ -122,10 +114,7 @@
     <ClCompile Include="src\EopGuiMaker\Creator\Components\Components.cpp">
       <Filter>src\EopGuiMaker\Creator\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\EopGuiMaker\Creator\Components\StyleSettings.cpp">
-      <Filter>src\EopGuiMaker\Creator\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="src\EopGuiMaker\Creator\UserWindow.cpp">
+    <ClCompile Include="src\EopGuiMaker\Creator\Components\UserWindow.cpp">
       <Filter>src\EopGuiMaker\Creator</Filter>
     </ClCompile>
     <ClCompile Include="src\EopGuiMaker\ImGui\ImGuiLayer.cpp">
@@ -161,5 +150,6 @@
     <ClCompile Include="vendor\ImGuiFileDialog\ImGuiFileDialog.cpp">
       <Filter>vendor\ImGuiFileDialog</Filter>
     </ClCompile>
+    <ClCompile Include="src\EopGuiMaker\ImGui\ImGuiHelpers.cpp" />
   </ItemGroup>
 </Project>

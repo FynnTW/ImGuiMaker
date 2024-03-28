@@ -89,20 +89,7 @@ namespace EopGuiMaker
 				}
 			}
 		}
-		for (const auto& [flag, flag_name] : WINDOW_FLAG_NAMES) {
-			bool is_true = WindowFlags & flag;
-			if (const std::size_t always_resize = std::string(flag_name).find("Always Auto"); 
-				always_resize != std::string::npos)
-			{
-				if (ImGui::Checkbox(flag_name, &is_true))
-				{
-					if (is_true)
-						WindowFlags |= flag;
-					else
-						WindowFlags &= ~flag;
-				}
-			}
-		}
+		WindowFlags = GetWindowFlags(WindowFlags, ImGuiWindowFlags_AlwaysAutoResize);
 	}
 
 	std::string ChildComponent::GenerateCode()
@@ -192,19 +179,18 @@ namespace EopGuiMaker
 	}
 
 	
-	void ChildComponent::PushComponent(Component* component)
+	void ChildComponent::PushComponent(Widget* component)
 	{
 		if (component->Type == ComponentType_Child)
 			Children.emplace_back(reinterpret_cast<ChildComponent*>(component));
 		m_Components.emplace_back(component);
 		ARRAY_CHANGED_CHILD = true;
 
-		component->ParentChild = this;
-		const auto spacing = ParentWindow->GetSpacing();
+		component->Parent = this;
 		ParentWindow->SelectedComponent = component;
 	}
 
-	void ChildComponent::PopComponent(const Component* component)
+	void ChildComponent::PopComponent(const Widget* component)
 	{
 		if (const auto it = std::find(m_Components.begin(), m_Components.end(), component); it != m_Components.end())
 		{

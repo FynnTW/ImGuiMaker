@@ -3,7 +3,7 @@
 
 namespace EopGuiMaker
 {
-	class Component;
+	class Widget;
 enum FloatStyle
 {
 	FloatStyle_Alpha = 0,
@@ -362,6 +362,14 @@ public:
 	std::string GenerateStylesCode()
 	{
 		std::string code;
+		if (PushedFont)
+		{
+			code += fmt::format("ImGui::PushFont({});\n", Font);
+		}
+		if (FLOAT_NOT_EQUAL(FontScale, 1.0f))
+		{
+			code += fmt::format("ImGui::SetWindowFontScale({:.3f});\n", FontScale);
+		}
 		if (SetStylesCount > 0)
 		{
 			
@@ -408,9 +416,16 @@ public:
 	std::string GenerateStylesLuaCode()
 	{
 		std::string code;
+		if (PushedFont)
+		{
+			code += fmt::format("ImGui.PushFont({})\n", Font);
+		}
+		if (FLOAT_NOT_EQUAL(FontScale, 1.0f))
+		{
+			code += fmt::format("ImGui.SetWindowFontScale({:.3f})\n", FontScale);
+		}
 		if (SetStylesCount > 0)
 		{
-			
 			for (int i = 0; i < ImGuiStyleVar_COUNT; i++)
 			{
 				if (IsFloatStyle & (1 << i))
@@ -475,6 +490,14 @@ public:
 		{
 			code += "ImGui::PopStyleColor(" + std::to_string(SetColorsCount) + ");\n";
 		}
+		if (FLOAT_NOT_EQUAL(FontScale, 1.0f))
+		{
+			code += fmt::format("ImGui::SetWindowFontScale({:.3f});\n", 1.0f);
+		}
+		if (PushedFont)
+		{
+			code += fmt::format("ImGui::PopFont();\n");
+		}
 		return code;
 	}
 
@@ -488,6 +511,14 @@ public:
 		if (SetColorsCount > 0)
 		{
 			code += "ImGui.PopStyleColor(" + std::to_string(SetColorsCount) + ")\n";
+		}
+		if (FLOAT_NOT_EQUAL(FontScale, 1.0f))
+		{
+			code += fmt::format("ImGui.SetWindowFontScale({:.3f})\n", 1.0f);
+		}
+		if (PushedFont)
+		{
+			code += fmt::format("ImGui.PopFont()\n");
 		}
 		return code;
 	}

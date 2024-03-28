@@ -1,5 +1,5 @@
 #include "gmpch.h"
-#include "ButtonComponent.h"
+#include "Creator/Components/Components.h"
 namespace EopGuiMaker
 {
 	void ButtonComponent::PropertiesWindow()
@@ -23,7 +23,7 @@ namespace EopGuiMaker
 		clone->Styles = *new StyleSettings(Styles);
 		clone->Size = Size;
 		clone->ParentWindow = ParentWindow;
-		clone->ParentChild = ParentChild;
+		clone->Parent = Parent;
 		clone->Position.x = Position.x;
 		clone->Position.y = Position.y + Size.y + 1.0f;
 		COPY_COUNT++;

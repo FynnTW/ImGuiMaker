@@ -5,9 +5,10 @@
 
 namespace EopGuiMaker
 {
-	void Component::SetPosition(ImVec2 position, const float grid_spacing_x, const float grid_spacing_y)
+	void Widget::SetPosition(ImVec2 position)
 	{
-		const ImVec2 parent_size = ParentChild ? ParentChild->Size : ParentWindow->WindowSize;
+		const auto spacing = ParentWindow->GetSpacing();
+		const ImVec2 parent_size = Parent->Size;
 		if (position.x < 0.0f)
 			position.x = 0.0f;
 		if (position.y < 0.0f)
@@ -19,20 +20,21 @@ namespace EopGuiMaker
 
 		if (IsSnappedPos)
 		{
-			if (const float mod_x = fmod(position.x, grid_spacing_x); mod_x > 0.5f)
-				position.x += grid_spacing_x - mod_x;
+			if (const float mod_x = fmod(position.x, spacing.x); mod_x > 0.5f)
+				position.x += spacing.x - mod_x;
 			else
 				Size.x -= mod_x;
-			if (const float mod_y = fmod(position.y, grid_spacing_y); mod_y > 0.5f)
-				position.y += grid_spacing_y - mod_y;
+			if (const float mod_y = fmod(position.y, spacing.y); mod_y > 0.5f)
+				position.y += spacing.y - mod_y;
 			else
 				position.y -= mod_y;
 		}
 		Position = position;
 	}
-	void Component::SetSize(ImVec2 size, const float grid_spacing_x, const float grid_spacing_y)
+	void Widget::SetSize(ImVec2 size)
 	{
-		const ImVec2 parent_size = ParentChild ? ParentChild->Size : ParentWindow->WindowSize;
+		const auto spacing = ParentWindow->GetSpacing();
+		const ImVec2 parent_size = Parent->Size;
 		if (size.x < 0.0f)
 			size.x = 1.0f;
 		if (size.y < 0.0f)
@@ -43,18 +45,18 @@ namespace EopGuiMaker
 			size.y = parent_size.y - Position.y;
 		if (IsSnappedSize)
 		{
-			if (const float mod_x = fmod(size.x, grid_spacing_x); mod_x > 0.5f)
-				size.x += grid_spacing_x - mod_x;
+			if (const float mod_x = fmod(size.x, spacing.x); mod_x > 0.5f)
+				size.x += spacing.x - mod_x;
 			else
 				size.x -= mod_x;
-			if (const float mod_y = fmod(size.y, grid_spacing_y); mod_y > 0.5f)
-				size.y += grid_spacing_y - mod_y;
+			if (const float mod_y = fmod(size.y, spacing.y); mod_y > 0.5f)
+				size.y += spacing.y - mod_y;
 			else
 				size.y -= mod_y;
 		}
 		Size = size;
 	}
-	void Component::DrawCopyButtons()
+	void Widget::DrawCopyButtons()
 	{
 		if (ImGui::Button("Copy Style"))
 		{
@@ -68,14 +70,14 @@ namespace EopGuiMaker
 		}
 	}
 	
-	void Component::DrawSnapOptions()
+	void Widget::DrawSnapOptions()
 	{
 		ImGui::Checkbox("Is Size Snapped", &IsSnappedSize);
 		ImGui::Checkbox("Is Position Snapped", &IsSnappedPos);
 	}
 
 
-	void Component::SetStyles()
+	void Widget::SetStyles()
 	{
 		if (Styles.FontScale != 1.0f)
 			ImGui::SetWindowFontScale(Styles.FontScale);
@@ -92,15 +94,15 @@ namespace EopGuiMaker
 				Styles.SetColor(i);
 	}
 
-	void Component::PopStyles() const
+	void Widget::PopStyles() const
 	{
 		Styles.PopStyles();
 		Styles.PopColors();
 		PopFont();
-		ImGui::SetWindowFontScale(ParentChild ? ParentChild->Styles.FontScale : ParentWindow->Style.FontScale);
+		ImGui::SetWindowFontScale(Parent->Styles.FontScale);
 	}
 	
-	void Component::DrawResetButtons()
+	void Widget::DrawResetButtons()
 	{
 		if (ImGui::Button("Reset Style"))
 			Styles.ResetStyles();
@@ -137,7 +139,7 @@ namespace EopGuiMaker
 	    // Step 2: Insert a new element with the new key and move the value
 	    // Check if the new label already exists to avoid overwriting
 	    if (ITEMS.find(new_label) == ITEMS.end()) {
-	        // Move the Component pointer to the new key
+	        // Move the Widget pointer to the new key
 	        ITEMS[new_label] = it->second;
 	    } else {
 			GUIMAKER_CORE_WARN("Label already exists");
@@ -150,7 +152,7 @@ namespace EopGuiMaker
 	    return true; // Update succeeded
 	}
 	
-	void Component::DrawProperties()
+	void Widget::DrawProperties()
 	{
 		if (ImGui::BeginCombo("Font", Styles.Font.c_str()))
 		{
@@ -177,7 +179,7 @@ namespace EopGuiMaker
 		}
 	}
 
-	void Component::SetFont()
+	void Widget::SetFont()
 	{
 		Styles.PushedFont = false;
 		if (!Styles.Font.empty())
@@ -190,7 +192,7 @@ namespace EopGuiMaker
 		}
 	}
 
-	void Component::PopFont() const
+	void Widget::PopFont() const
 	{
 		if (Styles.PushedFont)
 		{
@@ -203,49 +205,41 @@ namespace EopGuiMaker
 		ImGui::Text("Debug");
 	}
 
-	void Component::DrawParentsBox()
+	void Widget::DrawParentsBox()
 	{
-		if (ParentChild)
+		if (Parent->Type == ComponentType_Child)
 		{
-			ImGui::Text("Parent: %s", ParentChild->Label.c_str());
+			ImGui::Text("Parent: %s", Parent->Label.c_str());
 			if (ImGui::Button("Add To Main Window"))
 			{
-				ParentChild->PopComponent(this);
+				Parent->PopComponent(this);
 				ParentWindow->PushComponent(this);
-				this->ParentChild = nullptr;
+				this->Parent = ParentWindow;
 			}
 		}
 		else
 		{
 			ImGui::Text("Parent: Main Window");
 		}
-		if (const int children = ParentChild ? ParentChild->Children.size() : ParentWindow->Children.size(); 
+		if (const int children = Parent->Children.size(); 
 					children && (this->Type != ComponentType_Child || children > 1))
 		{
 			if (ImGui::BeginListBox("Children", {100.0f, 50.f}))
 			{
-				for (const auto& child : ParentChild ? ParentChild->Children : ParentWindow->Children)
+				for (const auto& child : Parent->Children)
 				{
 					if (child == this)
 						continue;
-					if (child == ParentChild)
+					if (child == Parent)
 						continue;
 					if (ImGui::Selectable(child->Label.c_str()))
 					{
-						const ImVec2 old_size = ParentChild ? ParentChild->Size : ParentWindow->WindowSize;
+						const ImVec2 old_size = Parent->Size;
 						const float pos_x_relative = Position.x / old_size.x;
 						const float pos_y_relative = Position.y / old_size.y;
-						const ImVec2 spacing = ParentWindow->GetSpacing();
-						if (ParentChild)
-						{
-							ParentChild->PopComponent(this);
-						}
-						else
-						{
-							ParentWindow->PopComponent(this);
-						}
+						Parent->PopComponent(this);
 						child->PushComponent(this);
-						SetPosition(ImVec2(pos_x_relative * child->Size.x, pos_y_relative * child->Size.y), spacing.x, spacing.y);
+						SetPosition(ImVec2(pos_x_relative * child->Size.x, pos_y_relative * child->Size.y));
 					}
 				}
 				ImGui::EndListBox();

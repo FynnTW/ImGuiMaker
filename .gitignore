@@ -10,3 +10,8 @@ x64/
 *.db-wal
 *.opendb
 *.sqlite
+src/EopGuiMaker/Events/MouseEvent.h
+src/EopGuiMaker/Events/KeyEvent.h
+src/EopGuiMaker/Events/ApplicationEvent.h
+src/EopGuiMaker/Creator/UserWindow.h
+src/EopGuiMaker/Creator/UserWindow.cpp
