@@ -73,7 +73,7 @@ namespace EopGuiMaker
 				glBindVertexArray(0);
 			}
 		}
-
+		
 		ProcessFontQueue();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
